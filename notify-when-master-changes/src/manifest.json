@@ -1,0 +1,32 @@
+{
+  "name": "notify-when-master-changes",
+  "description": "Subscribe to master changes and get notified",
+  "version": null,
+  "manifest_version": 2,
+  "icons": {
+    "48": "icons/icon_48.png",
+    "128": "icons/icon_128.png"
+  },
+  "browser_action": {
+    "default_title": "notify-when-master-changes",
+    "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "matches": ["https://github.com/*"],
+      "js": ["inject.js"],
+      "all_frames": true
+    }
+  ],
+  "permissions": ["*://*.github.com/*", "storage", "webRequest", "webRequestBlocking", "tabs"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": ["inject.js"],
+  "options_ui": {
+    "page": "options/options.html",
+    "chrome_style": true
+  }
+}
