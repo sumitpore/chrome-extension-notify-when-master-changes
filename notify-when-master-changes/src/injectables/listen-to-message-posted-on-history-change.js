@@ -1,13 +1,13 @@
-import SubscribeToMaster from './subscribe-to-master';
-import { MESSAGE } from './emit-events-on-history-change';
+import SubscribeToMasterBtn from './subscribe-to-master-btn';
+import { HISTORY_CHANGE_MESSAGE } from './post-message-on-history-change';
 
 const listenToMessagePostedOnHistoryChange = function() {
   window.addEventListener('message', function(event) {
-    if (event.data === MESSAGE) {
-      SubscribeToMaster.addSubscribeToMasterBtnInDom();
+    if (event.data === HISTORY_CHANGE_MESSAGE) {
+      SubscribeToMasterBtn.addBtnInDom();
     }
   });
-  window.addEventListener('popstate', SubscribeToMaster.addSubscribeToMasterBtnInDom);
+  window.addEventListener('popstate', SubscribeToMasterBtn.addBtnInDom);
 };
 
 export default listenToMessagePostedOnHistoryChange;

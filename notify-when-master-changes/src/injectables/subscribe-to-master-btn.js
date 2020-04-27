@@ -1,7 +1,7 @@
 import md5 from 'blueimp-md5';
 import autoBind from 'auto-bind';
 
-class SubscribeToMaster {
+class SubscribeToMasterBtn {
   props = {
     checkedMarkSvg: `<svg class="v-align-text-bottom" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#42C55F"/><path d="M4 8l2 3 6.5-4.5" stroke="#95FDAC"/></svg>`,
     subscribeBtnClass: 'stm-subscribe',
@@ -72,16 +72,16 @@ class SubscribeToMaster {
   }
 
   static getInstance(forceNew = false) {
-    if (typeof SubscribeToMaster.instance == 'undefined' || forceNew) {
-      SubscribeToMaster.instance = new SubscribeToMaster();
+    if (typeof SubscribeToMasterBtn.instance == 'undefined' || forceNew) {
+      SubscribeToMasterBtn.instance = new SubscribeToMasterBtn();
     }
 
-    return SubscribeToMaster.instance;
+    return SubscribeToMasterBtn.instance;
   }
 
-  static addSubscribeToMasterBtnInDom() {
-    SubscribeToMaster.getInstance().setupBtn();
+  static addBtnInDom() {
+    SubscribeToMasterBtn.getInstance().setupBtn();
   }
 }
 
-export default SubscribeToMaster;
+export default SubscribeToMasterBtn;

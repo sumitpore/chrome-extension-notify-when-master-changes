@@ -1,4 +1,4 @@
-let injectFnToDom = function(fn) {
+let injectFnInDom = function(fn) {
   var script = document.createElement('script');
   var parent = document.documentElement;
   script.textContent = '(' + fn + ')();';
@@ -6,4 +6,4 @@ let injectFnToDom = function(fn) {
   // parent.removeChild(script);
 };
 
-export default injectFnToDom;
+export default injectFnInDom;

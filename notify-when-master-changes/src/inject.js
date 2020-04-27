@@ -1,5 +1,5 @@
-import SubscribeToMaster from './injectables/subscribe-to-master';
-import injectFnToDom from './injectables/inject-fn-to-dom';
+import SubscribeToMasterBtn from './injectables/subscribe-to-master-btn';
+import injectFnInDom from './injectables/inject-fn-in-dom';
 import listenToMessagePostedOnHistoryChange from './injectables/listen-to-message-posted-on-history-change';
 import { postMessageOnHistoryChange } from './injectables/post-message-on-history-change';
 
@@ -7,7 +7,7 @@ import { postMessageOnHistoryChange } from './injectables/post-message-on-histor
  * Here is a brief about workflow
  *
  * When a github page is loaded for the first time,
- * `SubscribeToMaster.addSubscribeToMasterBtnInDom()` adds 'Subscribe/d to
+ * `SubscribeToMasterBtn.addBtnInDom()` adds 'Subscribe/d to
  * Master' in the DOM.
  *
  * Github uses pjax (push state and ajax) to navigate through pages. Since it
@@ -22,10 +22,10 @@ import { postMessageOnHistoryChange } from './injectables/post-message-on-histor
  * @see https://github.com/thieman/github-selfies/blob/master/chrome/selfie.js
  */
 
-// Inject function in DOM which emits event on History Change.
-injectFnToDom(postMessageOnHistoryChange);
+// Inject function in DOM which posts a message on History Change.
+injectFnInDom(postMessageOnHistoryChange);
 
 listenToMessagePostedOnHistoryChange();
 
 // Add button in DOM on first Load
-SubscribeToMaster.addSubscribeToMasterBtnInDom();
+SubscribeToMasterBtn.addBtnInDom();
