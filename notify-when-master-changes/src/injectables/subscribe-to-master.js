@@ -3,7 +3,6 @@ import autoBind from 'auto-bind';
 
 class SubscribeToMaster {
   props = {
-    pageActions: document.querySelector('.pagehead-actions'),
     checkedMarkSvg: `<svg class="v-align-text-bottom" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#42C55F"/><path d="M4 8l2 3 6.5-4.5" stroke="#95FDAC"/></svg>`,
     subscribeBtnClass: 'stm-subscribe',
     subscribedBtnClass: 'stm-subscribed',
@@ -11,12 +10,16 @@ class SubscribeToMaster {
 
   constructor() {
     autoBind(this);
-    this.setupBtn();
   }
 
   setupBtn(forceRender = false) {
+    this.addPageActionElementInProps();
     this.renderBtn(forceRender);
     this.addClickListenerOnBtn();
+  }
+
+  addPageActionElementInProps() {
+    this.props = { ...this.props, pageActions: document.querySelector('.pagehead-actions') };
   }
 
   renderBtn(force = false) {
@@ -68,15 +71,16 @@ class SubscribeToMaster {
     this.setupBtn(true);
   }
 
-  static getInstance() {
-    if (typeof SubscribeToMaster.instance == 'undefined') {
+  static getInstance(forceNew = false) {
+    if (typeof SubscribeToMaster.instance == 'undefined' || forceNew) {
       SubscribeToMaster.instance = new SubscribeToMaster();
     }
+
     return SubscribeToMaster.instance;
   }
 
   static addSubscribeToMasterBtnInDom() {
-    SubscribeToMaster.getInstance();
+    SubscribeToMaster.getInstance().setupBtn();
   }
 }
 

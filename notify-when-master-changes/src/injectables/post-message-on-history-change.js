@@ -1,18 +1,18 @@
-const EVENT_TAG = 'stm:page-changed';
+const MESSAGE = 'stm:page-changed';
 
-const emitEventOnHistoryChange = function() {
+const postMessageOnHistoryChange = function() {
   // let pushState = history.pushState;
   // history.pushState = function () {
   //   console.log('CUSTOM pushState');
-  //   window.postMessage( EVENT_TAG, '*' );
+  //   window.postMessage( MESSAGE, '*' );
   //   return pushState.apply( this, arguments );
   // };
 
   let replaceState = history.replaceState;
   history.replaceState = function() {
-    window.postMessage(EVENT_TAG, '*');
+    window.postMessage(MESSAGE, '*');
     return replaceState.apply(this, arguments);
   };
 };
 
-export { EVENT_TAG, emitEventOnHistoryChange };
+export { MESSAGE, postMessageOnHistoryChange };

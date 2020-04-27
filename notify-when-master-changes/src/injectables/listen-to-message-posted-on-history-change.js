@@ -1,13 +1,13 @@
 import SubscribeToMaster from './subscribe-to-master';
-import { EVENT_TAG } from './emit-events-on-history-change';
+import { MESSAGE } from './emit-events-on-history-change';
 
-const listenOnHistoryChangeEvent = function() {
+const listenToMessagePostedOnHistoryChange = function() {
   window.addEventListener('message', function(event) {
-    if (event.data === EVENT_TAG) {
+    if (event.data === MESSAGE) {
       SubscribeToMaster.addSubscribeToMasterBtnInDom();
     }
   });
   window.addEventListener('popstate', SubscribeToMaster.addSubscribeToMasterBtnInDom);
 };
 
-export default listenOnHistoryChangeEvent;
+export default listenToMessagePostedOnHistoryChange;
