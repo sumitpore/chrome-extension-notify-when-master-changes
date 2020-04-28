@@ -59,12 +59,12 @@ const saveObjectInLocalStorage = async function(obj) {
 /**
  * Removes Object from Chrome Local Storage.
  *
- * @param {string or array of string keys} objectKeys
+ * @param {string or array of string keys} keys
  */
-const removeObjectFromLocalStorage = async function(objectKeys) {
+const removeObjectFromLocalStorage = async function(keys) {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage.local.remove(objectKeys, function() {
+      chrome.storage.local.remove(keys, function() {
         resolve();
       });
     } catch (ex) {
