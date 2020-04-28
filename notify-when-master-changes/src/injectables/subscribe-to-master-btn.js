@@ -1,5 +1,5 @@
-import md5 from 'blueimp-md5';
 import autoBind from 'auto-bind';
+import { getRepoIdentifierFromUrl, isRepoStoredInStorage, saveRepoInfoInStorage, removeRepoInfoFromStorage } from '../utils';
 
 class SubscribeToMasterBtn {
   props = {
@@ -12,9 +12,15 @@ class SubscribeToMasterBtn {
     autoBind(this);
   }
 
-  setupBtn(forceRender = false) {
+  async setupBtn(forceRender = false) {
     this.addPageActionElementInProps();
-    this.renderBtn(forceRender);
+    this.addRepoIdentifierInProps();
+
+    if (!this.props.repoIdentifier) {
+      return;
+    }
+
+    await this.renderBtn(forceRender);
     this.addClickListenerOnBtn();
   }
 
@@ -22,17 +28,22 @@ class SubscribeToMasterBtn {
     this.props = { ...this.props, pageActions: document.querySelector('.pagehead-actions') };
   }
 
-  renderBtn(force = false) {
+  addRepoIdentifierInProps() {
+    this.props = { ...this.props, repoIdentifier: getRepoIdentifierFromUrl(document.URL) };
+  }
+
+  async renderBtn(force = false) {
     if (force) {
       let btn = document.querySelector('.btn-stm');
       if (btn !== null) {
         btn.parentNode.remove();
       }
     }
-    if (force) {
-      this.showSubscribedBtn();
-    } else {
+
+    if (!(await isRepoStoredInStorage(this.props.repoIdentifier))) {
       this.showSubscribeBtn();
+    } else {
+      this.showSubscribedBtn();
     }
   }
 
@@ -67,7 +78,24 @@ class SubscribeToMasterBtn {
     }
   }
 
-  addRepoToSubscriptionList() {
+  async addRepoToSubscriptionList() {
+    if (await isRepoStoredInStorage(this.props.repoIdentifier)) {
+      return;
+    }
+
+    let repoInfo = {
+      id: this.props.repoIdentifier,
+    };
+    saveRepoInfoInStorage(this.props.repoIdentifier, repoInfo);
+    this.setupBtn(true);
+  }
+
+  async removeRepoFromSubscriptionList() {
+    if (!(await isRepoStoredInStorage(this.props.repoIdentifier))) {
+      return;
+    }
+
+    removeRepoInfoFromStorage(this.props.repoIdentifier);
     this.setupBtn(true);
   }
 
