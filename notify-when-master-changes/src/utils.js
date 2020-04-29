@@ -32,6 +32,10 @@ const getRepoIdentifierFromUrl = function(url) {
   return urlSegments[0] + '/' + urlSegments[1];
 };
 
+/**
+ * Retrieve object from Chrome's Local StorageArea
+ * @param {string} key
+ */
 const getObjectFromLocalStorage = async function(key) {
   return new Promise((resolve, reject) => {
     try {
@@ -44,6 +48,10 @@ const getObjectFromLocalStorage = async function(key) {
   });
 };
 
+/**
+ * Save Object in Chrome's Local StorageArea
+ * @param {*} obj
+ */
 const saveObjectInLocalStorage = async function(obj) {
   return new Promise((resolve, reject) => {
     try {
@@ -57,7 +65,7 @@ const saveObjectInLocalStorage = async function(obj) {
 };
 
 /**
- * Removes Object from Chrome Local Storage.
+ * Removes Object from Chrome Local StorageArea.
  *
  * @param {string or array of string keys} keys
  */
