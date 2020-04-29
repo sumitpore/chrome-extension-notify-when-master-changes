@@ -5,6 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const ExtensionReloader = require('webpack-extension-reloader');
 const { VueLoaderPlugin } = require('vue-loader');
 const { version } = require('./package.json');
+const path = require('path');
 
 const config = {
   mode: process.env.NODE_ENV,
@@ -39,7 +40,17 @@ const config = {
       },
       {
         test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
+          {
+            loader: 'style-resources-loader',
+            options: {
+              patterns: [path.resolve(__dirname, 'src/shared-styles/typography.scss')],
+            },
+          },
+        ],
       },
       {
         test: /\.sass$/,
