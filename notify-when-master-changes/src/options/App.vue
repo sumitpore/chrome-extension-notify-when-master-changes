@@ -1,6 +1,8 @@
 <template>
   <vue-tabs>
-    <v-tab title="Subscription List">Subscription List</v-tab>
+    <v-tab title="Subscription List">
+      <SubscribedList />
+    </v-tab>
 
     <v-tab title="Options">Second tab content</v-tab>
   </vue-tabs>
@@ -8,11 +10,14 @@
 
 <script>
 import { VueTabs, VTab } from 'vue-nav-tabs';
+import SubscribedList from './components/subscribed-list';
+
 export default {
   name: 'App',
   components: {
     VueTabs,
     VTab,
+    SubscribedList,
   },
 };
 </script>
@@ -84,7 +89,7 @@ export default {
 .vue-tabs .nav-tabs > li.active > a,
 .vue-tabs .nav-tabs > li.active > a:hover,
 .vue-tabs .nav-tabs > li.active > a:focus {
-  color: #363843;
+  color: var(--primary-color);
   background-color: #fff;
   border: 1px solid #ddd;
   border-bottom-color: transparent;
@@ -93,7 +98,7 @@ export default {
 
 .vue-tabs .nav-tabs-navigation {
   text-align: center;
-  border-bottom: 1px solid #7274826e;
+  border-bottom: 1px solid var(--primary-border-color);
   margin-bottom: 30px;
 }
 .vue-tabs .nav-tabs-navigation .nav > li > a {
@@ -115,16 +120,16 @@ export default {
 
 .vue-tabs .nav-tabs > li > a {
   border: 0 none !important;
-  color: #575d759c;
+  color: var(--secondary-color);
 }
 
 .vue-tabs .nav-tabs > li > a:hover {
-  color: #66615b;
+  color: var(--primary-hover-color);
   background-color: transparent;
 }
 
 .vue-tabs .nav-tabs > li.active {
-  color: #66615b;
+  color: var(--primary-hover-color);
   position: relative;
 }
 

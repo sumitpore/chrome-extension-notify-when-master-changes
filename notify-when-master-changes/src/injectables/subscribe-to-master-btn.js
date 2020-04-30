@@ -1,5 +1,6 @@
 import autoBind from 'auto-bind';
-import { getRepoIdentifierFromUrl, isRepoStoredInStorage, saveRepoInfoInStorage, removeRepoInfoFromStorage } from '../utils';
+import { getRepoIdentifierFromUrl } from '../utils';
+import { isRepoStoredInStorage, saveRepoInfoInStorage, removeRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
 
 class SubscribeToMasterBtn {
   props = {
@@ -40,7 +41,9 @@ class SubscribeToMasterBtn {
       }
     }
 
-    if (!(await isRepoStoredInStorage(this.props.repoIdentifier))) {
+    let isRepoStored = await isRepoStoredInStorage(this.props.repoIdentifier);
+
+    if (!isRepoStored) {
       this.showSubscribeBtn();
     } else {
       this.showSubscribedBtn();
@@ -86,7 +89,7 @@ class SubscribeToMasterBtn {
     let repoInfo = {
       id: this.props.repoIdentifier,
     };
-    saveRepoInfoInStorage(this.props.repoIdentifier, repoInfo);
+    await saveRepoInfoInStorage(this.props.repoIdentifier, repoInfo);
     this.setupBtn(true);
   }
 
@@ -95,7 +98,7 @@ class SubscribeToMasterBtn {
       return;
     }
 
-    removeRepoInfoFromStorage(this.props.repoIdentifier);
+    await removeRepoInfoFromStorage(this.props.repoIdentifier);
     this.setupBtn(true);
   }
 
