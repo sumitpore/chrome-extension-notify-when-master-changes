@@ -47,7 +47,7 @@ const config = {
           {
             loader: 'style-resources-loader',
             options: {
-              patterns: [path.resolve(__dirname, 'src/shared-styles/typography.scss')],
+              patterns: [path.resolve(__dirname, 'src/shared-styles/index.scss')],
             },
           },
         ],
@@ -67,7 +67,7 @@ const config = {
         },
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'file-loader',
         options: {
           name: '[path][name].[ext]',
