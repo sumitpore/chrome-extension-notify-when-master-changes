@@ -12,6 +12,22 @@ const saveRepoInfoInStorage = async function(repoIdentifier, repoInfo) {
   await saveObjectInLocalStorage({ repos });
 };
 
+const removeMultipleRepoInfoFromStorage = async function(repoIdentifiers = []) {
+  if (repoIdentifiers.length == 0) {
+    return;
+  }
+
+  let savedRepos = await getObjectFromLocalStorage('repos');
+  if (typeof savedRepos == 'undefined') return;
+
+  for (let repoIdentifier of repoIdentifiers) {
+    if (typeof savedRepos[repoIdentifier] == 'undefined') continue;
+    delete savedRepos[repoIdentifier];
+  }
+
+  await saveObjectInLocalStorage({ repos: savedRepos });
+};
+
 const removeRepoInfoFromStorage = async function(repoIdentifier) {
   let savedRepos = await getObjectFromLocalStorage('repos');
   if (typeof savedRepos == 'undefined') return;
@@ -31,4 +47,10 @@ const isRepoStoredInStorage = async function(repoIdentifier) {
   return result == null ? false : true;
 };
 
-export { saveRepoInfoInStorage, removeRepoInfoFromStorage, isRepoStoredInStorage };
+const getAllReposFromStorage = async function() {
+  let savedRepos = await getObjectFromLocalStorage('repos');
+  if (typeof savedRepos == 'undefined') return null;
+  return savedRepos;
+};
+
+export { saveRepoInfoInStorage, removeMultipleRepoInfoFromStorage, removeRepoInfoFromStorage, isRepoStoredInStorage, getAllReposFromStorage };

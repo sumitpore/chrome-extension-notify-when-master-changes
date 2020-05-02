@@ -32,4 +32,8 @@ const getRepoIdentifierFromUrl = function(url) {
   return urlSegments[0] + '/' + urlSegments[1];
 };
 
-export { getRepoIdentifierFromUrl };
+const getRepoUrlFromIdentifier = function(repoIdentifier) {
+  return `https://github.com/${repoIdentifier}`;
+};
+
+export { getRepoIdentifierFromUrl, getRepoUrlFromIdentifier };

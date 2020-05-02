@@ -1,0 +1,88 @@
+body {
+  background: var(--main-bg-color);
+}
+
+input[type='checkbox'] {
+  background: url('../../svg-icons/checkbox.svg');
+  width: 25px;
+  height: 25px;
+  border: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+input[type='checkbox']:hover {
+  background: url('../../svg-icons/checkbox.svg') !important;
+  box-shadow: none !important;
+}
+
+input[type='checkbox']:checked,
+input[type='checkbox']:checked:hover {
+  background: url('../../svg-icons/checked-checkbox.svg') !important;
+}
+
+input[type='checkbox']:checked::before {
+  background: none;
+}
+
+.github-icon {
+  @include iconBase;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    width: 20px;
+    height: 20px;
+    background: url('../../svg-icons/github.svg');
+    position: absolute;
+    top: -10px;
+  }
+}
+
+.trash-icon {
+  @include iconBase;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    width: 15px;
+    height: 20px;
+    background: url('../../svg-icons/trash.svg');
+    position: absolute;
+    top: -10px;
+  }
+
+  &:hover::before {
+    background: url('../../svg-icons/trash-red.svg');
+  }
+}
+
+.ml-30px {
+  margin-left: 30px;
+}
+
+.container {
+  width: 900px;
+}
+
+.primary-btn {
+  @include largeText;
+  background: var(--primary-btn-bg-color) !important;
+  color: var(--primary-btn-text-color) !important;
+  font-weight: 600;
+  padding: 13px 23px;
+  text-decoration: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  box-shadow: none !important;
+  text-shadow: none !important;
+
+  &:hover {
+    background: var(--primary-color) !important;
+  }
+
+  &[disabled='disabled'] {
+    background: var(--primary-btn-disabled-bg-color) !important;
+  }
+}

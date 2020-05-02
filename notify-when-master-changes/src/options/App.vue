@@ -113,8 +113,8 @@ export default {
 }
 
 .vue-tabs .nav-tabs {
+  @include smallText;
   border-bottom: 0 none;
-  font-size: 14px;
   font-weight: 600;
 }
 

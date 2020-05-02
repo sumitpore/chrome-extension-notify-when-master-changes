@@ -1,0 +1,27 @@
+@mixin allSidesCollapsedBorder($borderSize: 1px, $borderColor: black) {
+  box-shadow: $borderSize 0 0 0 $borderColor, 0 $borderSize 0 0 $borderColor, $borderSize $borderSize 0 0 $borderColor, $borderSize 0 0 0 $borderColor inset,
+    0 $borderSize 0 0 $borderColor inset;
+}
+
+@mixin xlText {
+  font-size: 24px;
+  line-height: 29px;
+}
+
+@mixin largeText {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+@mixin smallText {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+@mixin iconBase {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}

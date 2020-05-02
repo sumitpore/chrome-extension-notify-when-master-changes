@@ -43,11 +43,19 @@ const config = {
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
-          'sass-loader',
+          'resolve-url-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+              sourceMapContents: false,
+            },
+          },
           {
             loader: 'style-resources-loader',
             options: {
-              patterns: [path.resolve(__dirname, 'src/shared-styles/index.scss')],
+              patterns: [path.resolve(__dirname, 'src/shared/styles/index.scss')],
+              injector: 'prepend',
             },
           },
         ],
