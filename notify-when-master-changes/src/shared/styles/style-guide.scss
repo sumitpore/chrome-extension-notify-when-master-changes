@@ -57,6 +57,24 @@ input[type='checkbox']:checked::before {
   }
 }
 
+.mute-icon {
+  @include iconBase;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    width: 25px;
+    height: 25px;
+    background: url('../../svg-icons/mute.svg');
+    position: absolute;
+    top: -15px;
+  }
+
+  &:hover::before {
+    background: url('../../svg-icons/mute-colored.svg');
+  }
+}
+
 .ml-30px {
   margin-left: 30px;
 }

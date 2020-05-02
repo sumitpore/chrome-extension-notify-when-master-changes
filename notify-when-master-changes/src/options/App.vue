@@ -1,6 +1,8 @@
 <template>
   <vue-tabs>
-    <v-tab title="Notifications">Notification Tab</v-tab>
+    <v-tab title="Notifications">
+      <NotificationsList />
+    </v-tab>
 
     <v-tab title="Subscription List">
       <SubscriptionList />
@@ -13,6 +15,7 @@
 <script>
 import { VueTabs, VTab } from 'vue-nav-tabs';
 import SubscriptionList from './components/subscription-list';
+import NotificationsList from './components/notifications-list';
 
 export default {
   name: 'App',
@@ -20,11 +23,14 @@ export default {
     VueTabs,
     VTab,
     SubscriptionList,
+    NotificationsList,
   },
 };
 </script>
 
 <style lang="scss">
+$distanceFromLeft: 30px;
+
 .vue-tabs .tabs__link {
   text-decoration: none;
   color: gray;
@@ -151,5 +157,46 @@ export default {
   bottom: 2px;
   width: 22px;
   height: 12px;
+}
+
+.repo-item {
+  @include allSidesCollapsedBorder(1px, var(--primary-border-color));
+  display: flex;
+  align-items: center;
+  padding: 25px 10px 25px $distanceFromLeft;
+  background: var(--table-bg-color);
+
+  &:first-of-type {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+
+  &:last-of-type {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
+  &.no-items {
+    @include largeText;
+    font-weight: 600;
+    justify-content: center;
+    color: var(--secondary-color);
+  }
+}
+
+.repo-title {
+  a {
+    @include largeText;
+    font-weight: 600;
+    vertical-align: middle;
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-left: 10px;
+  }
+}
+
+.primary-btn {
+  margin-left: $distanceFromLeft;
+  margin-top: 25px;
 }
 </style>
