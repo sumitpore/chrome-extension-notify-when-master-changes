@@ -1,7 +1,9 @@
 <template>
   <vue-tabs>
+    <v-tab title="Notifications">Notification Tab</v-tab>
+
     <v-tab title="Subscription List">
-      <SubscribedList />
+      <SubscriptionList />
     </v-tab>
 
     <v-tab title="Options">Second tab content</v-tab>
@@ -10,14 +12,14 @@
 
 <script>
 import { VueTabs, VTab } from 'vue-nav-tabs';
-import SubscribedList from './components/subscribed-list';
+import SubscriptionList from './components/subscription-list';
 
 export default {
   name: 'App',
   components: {
     VueTabs,
     VTab,
-    SubscribedList,
+    SubscriptionList,
   },
 };
 </script>

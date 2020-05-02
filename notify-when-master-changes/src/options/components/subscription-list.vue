@@ -24,7 +24,7 @@ import { getAllReposFromStorage, removeMultipleRepoInfoFromStorage, removeRepoIn
 import { getRepoUrlFromIdentifier } from '../../utils';
 
 export default {
-  name: 'SubscribedList',
+  name: 'SubscriptionList',
 
   data: function() {
     return {
