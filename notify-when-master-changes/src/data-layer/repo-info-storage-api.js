@@ -11,7 +11,7 @@ const saveRepoInfoInStorage = async function(repoIdentifier, repoInfo) {
     if (typeof savedRepos[repoIdentifier] == 'undefined') {
       repoInfoToSave = { [repoIdentifier]: repoInfo };
     } else {
-      updateInfo = { ...savedRepos[repoIdentifier], ...repoInfo };
+      let updateInfo = { ...savedRepos[repoIdentifier], ...repoInfo };
       repoInfoToSave = { [repoIdentifier]: updateInfo };
     }
     repos = { ...savedRepos, ...repoInfoToSave };

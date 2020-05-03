@@ -1,5 +1,8 @@
 import Vue from 'vue';
 import App from './App';
+import AsyncComputed from 'vue-async-computed';
+
+Vue.use(AsyncComputed);
 
 if (window.Element && !Element.prototype.closest) {
   Element.prototype.closest = function(s) {

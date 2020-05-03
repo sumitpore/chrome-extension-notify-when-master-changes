@@ -1,6 +1,6 @@
 import { getAllSavedReposIdentifiers } from './data-layer/repo-info-storage-api';
 import { getLastFetchedCommitSha, saveLastFetchedCommitSha } from './data-layer/last-fetched-commit-sha-storage-api';
-import { saveNotification } from './data-layer/notifications-storage-api';
+import { saveNotification, increamentNumberOfPendingNotifications } from './data-layer/notifications-storage-api';
 
 chrome.browserAction.setPopup({ popup: '' }); //disable browserAction's popup
 
@@ -42,10 +42,10 @@ chrome.alarms.onAlarm.addListener(alarm => {
   }
 });
 
-// schedule a new fetch every 30 minutes
+// schedule a new fetch every 12 Hours
 function scheduleRequest() {
-  console.log('schedule refresh alarm to 3 minutes...');
-  chrome.alarms.create('refresh', { periodInMinutes: 3 });
+  console.log('schedule refresh alarm to 720 minutes...');
+  chrome.alarms.create('refresh', { periodInMinutes: 720 });
 }
 
 // schedule a watchdog check every 5 minutes
@@ -58,21 +58,24 @@ function scheduleWatchdog() {
 async function fetchCommits() {
   console.log('start HTTP Request...');
   let repoIdentifiers = await getAllSavedReposIdentifiers();
-  if (!repoIdentifiers.length == 0) {
+  console.log(repoIdentifiers);
+  if (repoIdentifiers.length == 0) {
     return;
   }
 
-  for (repoIdentifier of repoIdentifiers) {
-    let lastFetchedCommitSha = getLastFetchedCommitSha(repoIdentifier);
-    let response = fetch(`https://api.github.com/repos/${lastFetchedCommitSha}/commits/master`);
+  for (let repoIdentifier of repoIdentifiers) {
+    let lastFetchedCommitSha = await getLastFetchedCommitSha(repoIdentifier);
+    let response = await fetch(`https://api.github.com/repos/${repoIdentifier}/commits/master`);
     if (response.ok) {
       let json = await response.json();
       if (json.sha == lastFetchedCommitSha) {
         continue;
       }
       console.log(json);
-      saveNotification(repoIdentifier, { sha: json.sha, message: json.commit.message });
-      saveLastFetchedCommitSha(repoIdentifier, json.sha);
+      // without await only one of the below data makes it to local storage.
+      await saveNotification(repoIdentifier, { sha: json.sha, message: json.commit.message });
+      await saveLastFetchedCommitSha(repoIdentifier, json.sha);
+      await increamentNumberOfPendingNotifications();
     } else {
       console.log('HTTP-Error: ' + response.status);
     }

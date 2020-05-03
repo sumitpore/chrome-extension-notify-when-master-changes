@@ -10,9 +10,12 @@ const getRepoNotifications = async function(repoIdentifier) {
 // example notification object { sha: '175aefa0b85ed9a740636f816495479e5787ed9d',
 // message: 'Commit Message' }
 const saveNotification = async function(repoIdentifier, notification) {
+  console.log(notification);
   let notifications = await getRepoNotifications(repoIdentifier);
-  notifications = { ...notifications, notification };
-  saveRepoInfoInStorage(repoIdentifier, { notifications });
+  console.log(notifications);
+  notifications.push(notification);
+  console.log({ notifications: notifications });
+  await saveRepoInfoInStorage(repoIdentifier, { notifications: notifications });
 };
 
 const removeAllNotificationsOfRepo = async function(repoIdentifier) {
@@ -22,9 +25,9 @@ const removeAllNotificationsOfRepo = async function(repoIdentifier) {
 const removeSingleNotificationOfRepo = async function(repoIdentifier, commitSha) {
   let notifications = await getRepoNotifications(repoIdentifier);
   if (notifications.length == 0) return;
-  for (let notification of notifications) {
-    if (notification.sha == commitSha) {
-      delete notification.sha;
+  for (let index in notifications) {
+    if (notifications[index].sha == commitSha) {
+      notifications.splice(index, 1);
     }
   }
   saveRepoInfoInStorage(repoIdentifier, { notifications });
@@ -39,7 +42,7 @@ const getAllReposNotifications = async function() {
       continue;
     }
     let notification = { [repoIdentifier]: allRepos[repoIdentifier]['notifications'] };
-    notifications = { ...notifications, notification };
+    notifications = { ...notifications, ...notification };
   }
   return notifications;
 };

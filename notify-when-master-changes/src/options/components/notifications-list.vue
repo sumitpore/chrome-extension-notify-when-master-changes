@@ -1,7 +1,10 @@
 <template>
   <div class="container">
-    <h1>Notifications</h1>
-    <section v-if="!emptyNotificationList">
+    <h1>
+      Notifications
+      <span class="notifications-count" v-if="pendingNotificationsCount > 0">{{ pendingNotificationsCount }}</span>
+    </h1>
+    <section v-if="pendingNotificationsCount > 0">
       <div v-for="(commits, repoIdentifier) in notifications" :key="repoIdentifier" class="repo-item">
         <div class="repo-title">
           <input type="checkbox" v-model="selectedRepos" :value="repoIdentifier" />
@@ -16,9 +19,15 @@
             @click="showPreviousCommits(repoIdentifier)"
           ></button>
           <div class="commits" :id="`${repoIdentifier}-commits`">
-            <a v-for="commit in commits" :key="commit.sha" :title="commit.message" :href="`https://github.com/${repoIdentifier}/commit/${commit.sha}`">
-              {{ commit.sha.substring(0, 7) }}
-            </a>
+            <a
+              target="_blank"
+              v-for="(commit, index) in commits"
+              :key="commit.sha"
+              :title="commit.message"
+              :href="`https://github.com/${repoIdentifier}/commit/${commit.sha}`"
+              @click="markNotificationRead(repoIdentifier, commit.sha, index)"
+              >{{ commit.sha.substring(0, 7) }}</a
+            >
           </div>
           <button
             v-if="commits.length > minCommitsCountForCarousel"
@@ -32,29 +41,30 @@
           <button class="mute-icon" title="Unsubscribe" @click="unsubscribeRepo(repoIdentifier)"></button>
         </div>
       </div>
-      <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="markSelectedReposNotificationRead">Mark Read</button>
+      <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="markSelectedReposNotificationsRead">Mark Read</button>
     </section>
 
     <section v-else>
-      <div class="repo-item no-items">Chill buddy, no new notifications! Everything Caught Up!</div>
+      <div class="repo-item no-items">Everything Caught Up!</div>
     </section>
   </div>
 </template>
 
 <script>
 import mixin from '../../shared/vue-mixins';
-import { getAllReposNotifications } from '../../data-layer/notifications-storage-api';
+import {
+  getAllReposNotifications,
+  getTotalNumberOfPendingNotifications,
+  decrementNumberOfPendingNotifications,
+  removeAllNotificationsOfRepo,
+  removeSingleNotificationOfRepo,
+} from '../../data-layer/notifications-storage-api';
 
 export default {
   name: 'NotificationsList',
 
   mixins: [mixin],
-  // 'getredash/redash': [
-  //   {
-  //     sha: '175aefa0b85ed9a740636f816495479e57870d9d',
-  //     message: 'minor fixes',
-  //   },
-  // ],
+
   data: function() {
     return {
       minCommitsCountForCarousel: 3,
@@ -63,7 +73,7 @@ export default {
   },
 
   mounted: async function() {
-    if (this.emptyNotificationList) {
+    if (this.pendingNotificationsCount <= 0) {
       return;
     }
 
@@ -77,13 +87,18 @@ export default {
     this.controlVisibilityPreviousAndNextIcons();
   },
 
-  computed: {
-    notifications: async function() {
-      return await getAllReposNotifications();
+  asyncComputed: {
+    notifications: {
+      async get() {
+        return await getAllReposNotifications();
+      },
+      default: {},
     },
-
-    emptyNotificationList: function() {
-      return Object.keys(this.notifications).length === 0;
+    pendingNotificationsCount: {
+      async get() {
+        return await getTotalNumberOfPendingNotifications();
+      },
+      default: 0,
     },
   },
 
@@ -152,13 +167,32 @@ export default {
       );
       lastCommitObserver.observe(lastCommitElement);
     },
+    markNotificationRead: async function(repoIdentifier, commitSha, index) {
+      this.$delete(this.notifications[repoIdentifier], index);
+      removeSingleNotificationOfRepo(repoIdentifier, commitSha);
 
-    markSelectedReposNotificationRead: function() {},
+      this.pendingNotificationsCount = this.pendingNotificationsCount - 1;
+      decrementNumberOfPendingNotifications();
+    },
+    markSelectedReposNotificationsRead: async function() {},
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.notifications-count {
+  background: var(--primary-heading-color);
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  color: white;
+  border-radius: 50%;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 40px;
+  font-size: 18px;
+}
+
 .repo-title {
   width: 55%;
   display: flex;
