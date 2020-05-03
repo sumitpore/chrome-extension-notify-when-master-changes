@@ -25,56 +25,6 @@ input[type='checkbox']:checked::before {
   background: none;
 }
 
-.github-icon {
-  @include iconBase;
-  position: relative;
-
-  &::before {
-    content: ' ';
-    width: 20px;
-    height: 20px;
-    background: url('../../svg-icons/github.svg');
-    position: absolute;
-    top: -10px;
-  }
-}
-
-.trash-icon {
-  @include iconBase;
-  position: relative;
-
-  &::before {
-    content: ' ';
-    width: 15px;
-    height: 20px;
-    background: url('../../svg-icons/trash.svg');
-    position: absolute;
-    top: -10px;
-  }
-
-  &:hover::before {
-    background: url('../../svg-icons/trash-red.svg');
-  }
-}
-
-.mute-icon {
-  @include iconBase;
-  position: relative;
-
-  &::before {
-    content: ' ';
-    width: 25px;
-    height: 25px;
-    background: url('../../svg-icons/mute.svg');
-    position: absolute;
-    top: -15px;
-  }
-
-  &:hover::before {
-    background: url('../../svg-icons/mute-colored.svg');
-  }
-}
-
 .ml-30px {
   margin-left: 30px;
 }

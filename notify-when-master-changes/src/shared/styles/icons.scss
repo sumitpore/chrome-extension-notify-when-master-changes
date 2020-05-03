@@ -1,0 +1,73 @@
+.github-icon {
+  @include iconBase;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    width: 20px;
+    height: 20px;
+    background: url('../../svg-icons/github.svg');
+    position: absolute;
+    top: -10px;
+  }
+}
+
+.trash-icon {
+  @include iconBase;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    width: 15px;
+    height: 20px;
+    background: url('../../svg-icons/trash.svg');
+    position: absolute;
+    top: -10px;
+  }
+
+  &:hover::before {
+    background: url('../../svg-icons/trash-red.svg');
+  }
+}
+
+.mute-icon {
+  @include iconBase;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    width: 25px;
+    height: 25px;
+    background: url('../../svg-icons/mute.svg');
+    position: absolute;
+    top: -15px;
+  }
+
+  &:hover::before {
+    background: url('../../svg-icons/mute-colored.svg');
+  }
+}
+
+.left-arrow-icon,
+.right-arrow-icon {
+  @include iconBase;
+  position: relative;
+
+  &::before {
+    content: ' ';
+    background: url('../../svg-icons/left-arrow.svg');
+    width: 12px;
+    height: 22px;
+    position: absolute;
+    top: -10px;
+  }
+
+  &:hover::before {
+    background: url('../../svg-icons/left-arrow-hover.svg');
+  }
+}
+
+.right-arrow-icon::before {
+  right: 0;
+  transform: rotate(180deg);
+}
