@@ -2,12 +2,19 @@ import { getObjectFromLocalStorage, saveObjectInLocalStorage, removeObjectFromLo
 
 const saveRepoInfoInStorage = async function(repoIdentifier, repoInfo) {
   let savedRepos = await getObjectFromLocalStorage('repos');
-  let newRepo = { [repoIdentifier]: repoInfo };
   let repos = null;
+  let repoInfoToSave = null;
   if (typeof savedRepos == 'undefined') {
+    let newRepo = { [repoIdentifier]: repoInfo };
     repos = { ...newRepo };
   } else {
-    repos = { ...savedRepos, ...newRepo };
+    if (typeof savedRepos[repoIdentifier] == 'undefined') {
+      repoInfoToSave = { [repoIdentifier]: repoInfo };
+    } else {
+      updateInfo = { ...savedRepos[repoIdentifier], ...repoInfo };
+      repoInfoToSave = { [repoIdentifier]: updateInfo };
+    }
+    repos = { ...savedRepos, ...repoInfoToSave };
   }
   await saveObjectInLocalStorage({ repos });
 };
@@ -53,4 +60,18 @@ const getAllReposFromStorage = async function() {
   return savedRepos;
 };
 
-export { saveRepoInfoInStorage, removeMultipleRepoInfoFromStorage, removeRepoInfoFromStorage, isRepoStoredInStorage, getAllReposFromStorage };
+const getAllSavedReposIdentifiers = async function() {
+  let savedRepos = await getAllReposFromStorage();
+  if (savedRepos == null) return [];
+  return Object.keys(savedRepos);
+};
+
+export {
+  saveRepoInfoInStorage,
+  removeMultipleRepoInfoFromStorage,
+  removeRepoInfoFromStorage,
+  isRepoStoredInStorage,
+  getAllReposFromStorage,
+  getRepoInfoFromStorage,
+  getAllSavedReposIdentifiers,
+};

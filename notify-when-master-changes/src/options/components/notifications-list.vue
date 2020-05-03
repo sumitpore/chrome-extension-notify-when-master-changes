@@ -16,9 +16,9 @@
             @click="showPreviousCommits(repoIdentifier)"
           ></button>
           <div class="commits" :id="`${repoIdentifier}-commits`">
-            <a v-for="commit in commits" :key="commit.sha" :title="commit.message" :href="`https://github.com/${repoIdentifier}/commit/${commit.sha}`">{{
-              commit.sha.substring(0, 7)
-            }}</a>
+            <a v-for="commit in commits" :key="commit.sha" :title="commit.message" :href="`https://github.com/${repoIdentifier}/commit/${commit.sha}`">
+              {{ commit.sha.substring(0, 7) }}
+            </a>
           </div>
           <button
             v-if="commits.length > minCommitsCountForCarousel"
@@ -43,6 +43,7 @@
 
 <script>
 import mixin from '../../shared/vue-mixins';
+import { getAllReposNotifications } from '../../data-layer/notifications-storage-api';
 
 export default {
   name: 'NotificationsList',
@@ -57,14 +58,6 @@ export default {
   data: function() {
     return {
       minCommitsCountForCarousel: 3,
-      notifications: {
-        'getredash/redash': [
-          {
-            sha: '175aefa0b85ed9a740636f816495479e57870d9d',
-            message: 'minor fixes',
-          },
-        ],
-      },
       singleCommitElementWidth: 0,
     };
   },
@@ -85,6 +78,10 @@ export default {
   },
 
   computed: {
+    notifications: async function() {
+      return await getAllReposNotifications();
+    },
+
     emptyNotificationList: function() {
       return Object.keys(this.notifications).length === 0;
     },

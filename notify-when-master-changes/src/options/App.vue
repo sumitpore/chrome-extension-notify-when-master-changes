@@ -25,6 +25,9 @@ export default {
     SubscriptionList,
     NotificationsList,
   },
+  computed: {
+    totalNotificationsNumber: function() {},
+  },
 };
 </script>
 
