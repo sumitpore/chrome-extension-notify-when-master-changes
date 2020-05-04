@@ -12,8 +12,8 @@ const config = {
   context: __dirname + '/src',
   entry: {
     background: './background.js',
-    'popup/popup': './popup/popup.js',
-    'options/options': './options/options.js',
+    // 'popup/popup': './popup/popup.js',
+    'dashboard/dashboard': './dashboard/dashboard.js',
     inject: './inject.js',
   },
   output: {
@@ -96,8 +96,8 @@ const config = {
     }),
     new CopyPlugin([
       { from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-      { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
-      { from: 'options/options.html', to: 'options/options.html', transform: transformHtml },
+      // { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
+      { from: 'dashboard/dashboard.html', to: 'dashboard/dashboard.html', transform: transformHtml },
       // { from: 'inject.js', to: 'inject.js' },
       {
         from: 'manifest.json',

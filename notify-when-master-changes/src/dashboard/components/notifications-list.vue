@@ -41,6 +41,7 @@
           <button class="mute-icon" title="Unsubscribe" @click="unsubscribeRepo(repoIdentifier)"></button>
         </div>
       </div>
+
       <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="markSelectedReposNotificationsRead">Mark Read</button>
     </section>
 
