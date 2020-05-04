@@ -14,13 +14,13 @@
       <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="unsubscribeSelectedRepos">Unsubscribe</button>
     </section>
     <section v-else>
-      <div class="repo-item no-items">No Github Repo added to watch for Master changes!</div>
+      <div class="repo-item no-items">Visit Github Repository of your choice and click 'Subscribe to Master' button.</div>
     </section>
   </div>
 </template>
 
 <script>
-import { getAllReposFromStorage, removeMultipleRepoInfoFromStorage } from '../../data-layer/repo-info-storage-api';
+import { getAllReposFromStorage, deleteMultipleRepoInfoFromStorage } from '../../data-layer/repo-info-storage-api';
 import mixin from '../../shared/vue-mixins';
 
 export default {
@@ -43,11 +43,12 @@ export default {
 
   methods: {
     unsubscribeSelectedRepos: function() {
+      deleteMultipleRepoInfoFromStorage(this.selectedRepos);
+
       for (let repoIdentifier of this.selectedRepos) {
         if (typeof this.savedRepos[repoIdentifier] == 'undefined') continue;
         this.$delete(this.savedRepos, repoIdentifier);
       }
-      removeMultipleRepoInfoFromStorage(this.selectedRepos);
 
       this.selectedRepos = [];
     },

@@ -18,11 +18,11 @@ const saveNotification = async function(repoIdentifier, notification) {
   await saveRepoInfoInStorage(repoIdentifier, { notifications: notifications });
 };
 
-const removeAllNotificationsOfRepo = async function(repoIdentifier) {
-  saveRepoInfoInStorage(repoIdentifier, { notifications: {} });
+const deleteAllNotificationsOfRepo = async function(repoIdentifier) {
+  saveRepoInfoInStorage(repoIdentifier, { notifications: [] });
 };
 
-const removeSingleNotificationOfRepo = async function(repoIdentifier, commitSha) {
+const deleteSingleNotificationOfRepo = async function(repoIdentifier, commitSha) {
   let notifications = await getRepoNotifications(repoIdentifier);
   if (notifications.length == 0) return;
   for (let index in notifications) {
@@ -53,6 +53,10 @@ const getTotalNumberOfPendingNotifications = async function() {
   return numberOfPendingNotifications;
 };
 
+const updateNumberOfPendingNotifications = async function(notificationsCount) {
+  saveObjectInLocalStorage({ pending_notifications_count: parseInt(notificationsCount) });
+};
+
 const increamentNumberOfPendingNotifications = async function() {
   let numberOfPendingNotifications = parseInt(await getTotalNumberOfPendingNotifications());
   saveObjectInLocalStorage({ pending_notifications_count: numberOfPendingNotifications + 1 });
@@ -68,10 +72,11 @@ const decrementNumberOfPendingNotifications = async function() {
 export {
   getRepoNotifications,
   saveNotification,
-  removeAllNotificationsOfRepo,
-  removeSingleNotificationOfRepo,
+  deleteAllNotificationsOfRepo,
+  deleteSingleNotificationOfRepo,
   getAllReposNotifications,
   getTotalNumberOfPendingNotifications,
+  updateNumberOfPendingNotifications,
   increamentNumberOfPendingNotifications,
   decrementNumberOfPendingNotifications,
 };

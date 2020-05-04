@@ -1,6 +1,6 @@
 import autoBind from 'auto-bind';
 import { getRepoIdentifierFromUrl } from '../utils';
-import { isRepoStoredInStorage, saveRepoInfoInStorage, removeRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
+import { isRepoStoredInStorage, saveRepoInfoInStorage, deleteRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
 
 class SubscribeToMasterBtn {
   props = {
@@ -98,7 +98,7 @@ class SubscribeToMasterBtn {
       return;
     }
 
-    await removeRepoInfoFromStorage(this.props.repoIdentifier);
+    await deleteRepoInfoFromStorage(this.props.repoIdentifier);
     this.setupBtn(true);
   }
 

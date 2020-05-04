@@ -1,5 +1,5 @@
 import { getRepoUrlFromIdentifier } from '../utils';
-import { removeRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
+import { deleteRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
 
 export default {
   data: function() {
@@ -11,7 +11,7 @@ export default {
   methods: {
     getRepoUrlFromIdentifier,
     unsubscribeRepo: function(repoIdentifier) {
-      removeRepoInfoFromStorage(repoIdentifier);
+      deleteRepoInfoFromStorage(repoIdentifier);
       if (typeof this.savedRepos[repoIdentifier] == 'undefined') return;
       this.$delete(this.savedRepos, repoIdentifier);
     },

@@ -1,5 +1,5 @@
 <template>
-  <vue-tabs>
+  <vue-tabs v-model="tabName">
     <v-tab title="Notifications">
       <NotificationsList />
     </v-tab>
@@ -8,7 +8,7 @@
       <SubscriptionList />
     </v-tab>
 
-    <v-tab title="Options">Second tab content</v-tab>
+    <!-- <v-tab title="Options">Second tab content</v-tab> -->
   </vue-tabs>
 </template>
 
@@ -16,6 +16,7 @@
 import { VueTabs, VTab } from 'vue-nav-tabs';
 import SubscriptionList from './components/subscription-list';
 import NotificationsList from './components/notifications-list';
+import { getTotalNumberOfPendingNotifications } from '../data-layer/notifications-storage-api';
 
 export default {
   name: 'App',
@@ -25,8 +26,15 @@ export default {
     SubscriptionList,
     NotificationsList,
   },
-  computed: {
-    totalNotificationsNumber: function() {},
+  asyncComputed: {
+    tabName: {
+      async get() {
+        let pendingNotificationsCount = await getTotalNumberOfPendingNotifications();
+        console.log(pendingNotificationsCount);
+        return pendingNotificationsCount > 0 ? 'Notifications' : 'Subscription List';
+      },
+      default: 'Subscription List',
+    },
   },
 };
 </script>
@@ -181,7 +189,6 @@ $distanceFromLeft: 30px;
 
   &.no-items {
     @include largeText;
-    font-weight: 600;
     justify-content: center;
     color: var(--secondary-color);
   }

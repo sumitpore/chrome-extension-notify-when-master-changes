@@ -38,11 +38,11 @@
         </div>
 
         <div class="action-items">
-          <button class="mute-icon" title="Unsubscribe" @click="unsubscribeRepo(repoIdentifier)"></button>
+          <button class="mute-icon" title="Unsubscribe" @click="unsubscribeRepoExtended(repoIdentifier)"></button>
         </div>
       </div>
 
-      <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="markSelectedReposNotificationsRead">Mark Read</button>
+      <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="deleteSelectedReposNotifications">Delete Notifications</button>
     </section>
 
     <section v-else>
@@ -57,8 +57,9 @@ import {
   getAllReposNotifications,
   getTotalNumberOfPendingNotifications,
   decrementNumberOfPendingNotifications,
-  removeAllNotificationsOfRepo,
-  removeSingleNotificationOfRepo,
+  updateNumberOfPendingNotifications,
+  deleteAllNotificationsOfRepo,
+  deleteSingleNotificationOfRepo,
 } from '../../data-layer/notifications-storage-api';
 
 export default {
@@ -168,14 +169,35 @@ export default {
       );
       lastCommitObserver.observe(lastCommitElement);
     },
+
     markNotificationRead: async function(repoIdentifier, commitSha, index) {
       this.$delete(this.notifications[repoIdentifier], index);
-      removeSingleNotificationOfRepo(repoIdentifier, commitSha);
+      deleteSingleNotificationOfRepo(repoIdentifier, commitSha);
 
       this.pendingNotificationsCount = this.pendingNotificationsCount - 1;
       decrementNumberOfPendingNotifications();
     },
-    markSelectedReposNotificationsRead: async function() {},
+
+    unsubscribeRepoExtended: function(repoIdentifier) {
+      let repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
+      this.pendingNotificationsCount = this.pendingNotificationsCount - repoPendingNotificationsCount;
+      this.$delete(this.notifications, repoIdentifier);
+
+      this.unsubscribeRepo(repoIdentifier);
+      updateNumberOfPendingNotifications(this.pendingNotificationsCount);
+    },
+
+    deleteSelectedReposNotifications: async function() {
+      for (let repoIdentifier of this.selectedRepos) {
+        await deleteAllNotificationsOfRepo(repoIdentifier);
+        let repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
+        this.pendingNotificationsCount = this.pendingNotificationsCount - repoPendingNotificationsCount;
+        await updateNumberOfPendingNotifications(this.pendingNotificationsCount);
+        this.$delete(this.notifications, repoIdentifier);
+      }
+
+      this.selectedRepos = [];
+    },
   },
 };
 </script>

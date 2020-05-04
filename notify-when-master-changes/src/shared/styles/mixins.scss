@@ -13,6 +13,11 @@
   line-height: 24px;
 }
 
+@mixin mediumText {
+  font-size: 17px;
+  line-height: 16px;
+}
+
 @mixin smallText {
   font-size: 14px;
   line-height: 18px;

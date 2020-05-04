@@ -34,11 +34,10 @@ input[type='checkbox']:checked::before {
 }
 
 .primary-btn {
-  @include largeText;
+  @include mediumText;
   background: var(--primary-btn-bg-color) !important;
   color: var(--primary-btn-text-color) !important;
-  font-weight: 600;
-  padding: 13px 23px;
+  padding: 13px 13px;
   text-decoration: none;
   border-radius: 5px;
   cursor: pointer;

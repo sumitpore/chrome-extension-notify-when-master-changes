@@ -1,4 +1,4 @@
-import { getObjectFromLocalStorage, saveObjectInLocalStorage, removeObjectFromLocalStorage } from './local-storage-api';
+import { getObjectFromLocalStorage, saveObjectInLocalStorage } from './local-storage-api';
 
 const saveRepoInfoInStorage = async function(repoIdentifier, repoInfo) {
   let savedRepos = await getObjectFromLocalStorage('repos');
@@ -19,7 +19,7 @@ const saveRepoInfoInStorage = async function(repoIdentifier, repoInfo) {
   await saveObjectInLocalStorage({ repos });
 };
 
-const removeMultipleRepoInfoFromStorage = async function(repoIdentifiers = []) {
+const deleteMultipleRepoInfoFromStorage = async function(repoIdentifiers = []) {
   if (repoIdentifiers.length == 0) {
     return;
   }
@@ -35,7 +35,7 @@ const removeMultipleRepoInfoFromStorage = async function(repoIdentifiers = []) {
   await saveObjectInLocalStorage({ repos: savedRepos });
 };
 
-const removeRepoInfoFromStorage = async function(repoIdentifier) {
+const deleteRepoInfoFromStorage = async function(repoIdentifier) {
   let savedRepos = await getObjectFromLocalStorage('repos');
   if (typeof savedRepos == 'undefined') return;
   if (typeof savedRepos[repoIdentifier] == 'undefined') return;
@@ -68,8 +68,8 @@ const getAllSavedReposIdentifiers = async function() {
 
 export {
   saveRepoInfoInStorage,
-  removeMultipleRepoInfoFromStorage,
-  removeRepoInfoFromStorage,
+  deleteMultipleRepoInfoFromStorage,
+  deleteRepoInfoFromStorage,
   isRepoStoredInStorage,
   getAllReposFromStorage,
   getRepoInfoFromStorage,
