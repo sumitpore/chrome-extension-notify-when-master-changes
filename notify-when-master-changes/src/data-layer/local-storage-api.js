@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /**
  * Retrieve object from Chrome's Local StorageArea
  * @param {string} key

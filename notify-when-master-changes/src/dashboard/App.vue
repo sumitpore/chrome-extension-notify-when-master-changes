@@ -1,11 +1,11 @@
 <template>
   <vue-tabs v-model="tabName">
     <v-tab title="Notifications">
-      <NotificationsList />
+      <NotificationsList :savedRepos="savedRepos" />
     </v-tab>
 
     <v-tab title="Subscription List">
-      <SubscriptionList />
+      <SubscriptionList :savedRepos="savedRepos" />
     </v-tab>
 
     <!-- <v-tab title="Options">Second tab content</v-tab> -->
@@ -17,6 +17,7 @@ import { VueTabs, VTab } from 'vue-nav-tabs';
 import SubscriptionList from './components/subscription-list';
 import NotificationsList from './components/notifications-list';
 import { getTotalNumberOfPendingNotifications } from '../data-layer/notifications-storage-api';
+import { getAllReposFromStorage } from '../data-layer/repo-info-storage-api';
 
 export default {
   name: 'App',
@@ -29,11 +30,21 @@ export default {
   asyncComputed: {
     tabName: {
       async get() {
-        let pendingNotificationsCount = await getTotalNumberOfPendingNotifications();
+        const pendingNotificationsCount = await getTotalNumberOfPendingNotifications();
         console.log(pendingNotificationsCount);
         return pendingNotificationsCount > 0 ? 'Notifications' : 'Subscription List';
       },
       default: 'Subscription List',
+    },
+    savedRepos: {
+      async get() {
+        const savedRepos = await getAllReposFromStorage();
+        if (savedRepos != null) {
+          return savedRepos;
+        }
+        return {};
+      },
+      default: {},
     },
   },
 };

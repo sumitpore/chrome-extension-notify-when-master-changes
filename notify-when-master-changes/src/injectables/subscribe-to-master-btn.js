@@ -35,13 +35,13 @@ class SubscribeToMasterBtn {
 
   async renderBtn(force = false) {
     if (force) {
-      let btn = document.querySelector('.btn-stm');
+      const btn = document.querySelector('.btn-stm');
       if (btn !== null) {
         btn.parentNode.remove();
       }
     }
 
-    let isRepoStored = await isRepoStoredInStorage(this.props.repoIdentifier);
+    const isRepoStored = await isRepoStoredInStorage(this.props.repoIdentifier);
 
     if (!isRepoStored) {
       this.showSubscribeBtn();
@@ -54,7 +54,7 @@ class SubscribeToMasterBtn {
     if (this.props.pageActions === null) {
       return;
     }
-    let subscribeToMasterItem = document.createElement('li');
+    const subscribeToMasterItem = document.createElement('li');
     subscribeToMasterItem.innerHTML = `<button class="btn btn-sm btn-stm ${this.props.subscribeBtnClass}"> Subscribe to Master</button>`;
     this.props.pageActions.insertBefore(subscribeToMasterItem, this.props.pageActions.firstChild);
   }
@@ -64,18 +64,18 @@ class SubscribeToMasterBtn {
       return;
     }
 
-    let subscribedToMasterItem = document.createElement('li');
+    const subscribedToMasterItem = document.createElement('li');
     subscribedToMasterItem.innerHTML = `<button class="btn btn-sm btn-stm ${this.props.subscribedBtnClass}">${this.props.checkedMarkSvg} Subscribed to Master</button>`;
     this.props.pageActions.insertBefore(subscribedToMasterItem, this.props.pageActions.firstChild);
   }
 
   addClickListenerOnBtn() {
-    let subscribeBtn = document.querySelector(`.${this.props.subscribeBtnClass}`);
+    const subscribeBtn = document.querySelector(`.${this.props.subscribeBtnClass}`);
     if (subscribeBtn !== null) {
       subscribeBtn.addEventListener('click', this.addRepoToSubscriptionList);
     }
 
-    let subscribedBtn = document.querySelector(`.${this.props.subscribedBtnClass}`);
+    const subscribedBtn = document.querySelector(`.${this.props.subscribedBtnClass}`);
     if (subscribedBtn !== null) {
       subscribedBtn.addEventListener('click', this.removeRepoFromSubscriptionList);
     }
@@ -86,7 +86,7 @@ class SubscribeToMasterBtn {
       return;
     }
 
-    let repoInfo = {
+    const repoInfo = {
       id: this.props.repoIdentifier,
     };
     await saveRepoInfoInStorage(this.props.repoIdentifier, repoInfo);

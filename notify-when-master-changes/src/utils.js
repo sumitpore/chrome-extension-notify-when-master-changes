@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const isValidRepoUrl = function(url) {
   if (!url || url.length === 0) {
     return false;
@@ -13,7 +14,7 @@ const isValidRepoUrl = function(url) {
     return false;
   }
 
-  let urlSegments = url.split('/');
+  const urlSegments = url.split('/');
 
   // urlSegments should have at least 2 segments
   if (urlSegments[1] == null) {
@@ -28,8 +29,8 @@ const getRepoIdentifierFromUrl = function(url) {
     return null;
   }
   url = url.replace('https://github.com/', '');
-  let urlSegments = url.split('/');
-  return urlSegments[0] + '/' + urlSegments[1];
+  const urlSegments = url.split('/');
+  return `${urlSegments[0]}/${urlSegments[1]}`;
 };
 
 const getRepoUrlFromIdentifier = function(repoIdentifier) {

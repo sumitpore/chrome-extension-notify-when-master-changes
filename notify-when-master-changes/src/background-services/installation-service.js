@@ -27,6 +27,7 @@ class InstallationService {
     FetchCommitsService.fetchCommits();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onBrowserStart() {
     // fetch and save data when chrome restarted, alarm will continue running when chrome is restarted
     console.log('onStartup....');
@@ -36,6 +37,7 @@ class InstallationService {
   onAlarm(alarm) {
     // if watchdog is triggered, check whether refresh alarm is there
     if (alarm && alarm.name === 'watchdog') {
+      // eslint-disable-next-line no-shadow
       chrome.alarms.get('refresh', alarm => {
         if (alarm) {
           console.log('Refresh alarm exists. Yay.');

@@ -47,6 +47,9 @@ module.exports = {
         ],
       },
     ],
+    'func-names': ['error', 'as-needed'],
+    eqeqeq: 'off',
+    'func-names': 'off',
     // disallow default export over named export
     'import/prefer-default-export': 'off',
     // allow debugger during development

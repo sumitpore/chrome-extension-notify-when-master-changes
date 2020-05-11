@@ -67,21 +67,27 @@ export default {
 
   mixins: [mixin],
 
-  data: function() {
+  props: {
+    savedRepos: {
+      type: Object,
+    },
+  },
+
+  data() {
     return {
       minCommitsCountForCarousel: 3,
       singleCommitElementWidth: 0,
     };
   },
 
-  mounted: async function() {
+  async mounted() {
     if (this.pendingNotificationsCount <= 0) {
       return;
     }
 
     await this.$nextTick();
 
-    let singleCommitElement = document.querySelector('.commits a:first-of-type');
+    const singleCommitElement = document.querySelector('.commits a:first-of-type');
     if (singleCommitElement != null) {
       this.singleCommitElementWidth = singleCommitElement.clientWidth;
     }
@@ -92,45 +98,45 @@ export default {
   asyncComputed: {
     notifications: {
       async get() {
-        return await getAllReposNotifications();
+        return getAllReposNotifications();
       },
       default: {},
     },
     pendingNotificationsCount: {
       async get() {
-        return await getTotalNumberOfPendingNotifications();
+        return getTotalNumberOfPendingNotifications();
       },
       default: 0,
     },
   },
 
   methods: {
-    showPreviousCommits: function(repoIdentifier) {
-      let commitsElement = document.getElementById(`${repoIdentifier}-commits`);
+    showPreviousCommits(repoIdentifier) {
+      const commitsElement = document.getElementById(`${repoIdentifier}-commits`);
       commitsElement.scrollLeft = commitsElement.scrollLeft - commitsElement.offsetWidth + this.singleCommitElementWidth;
     },
 
-    showNextCommits: function(repoIdentifier) {
-      let commitsElement = document.getElementById(`${repoIdentifier}-commits`);
+    showNextCommits(repoIdentifier) {
+      const commitsElement = document.getElementById(`${repoIdentifier}-commits`);
       commitsElement.scrollLeft = commitsElement.scrollLeft + commitsElement.offsetWidth - this.singleCommitElementWidth;
     },
 
-    controlVisibilityPreviousAndNextIcons: function() {
-      let allCommitsElements = document.querySelectorAll('.commits');
+    controlVisibilityPreviousAndNextIcons() {
+      const allCommitsElements = document.querySelectorAll('.commits');
       if (allCommitsElements == null) return;
-      for (let commitsElement of allCommitsElements) {
+      allCommitsElements.forEach(commitsElement => {
         if (commitsElement.childElementCount <= this.minCommitsCountForCarousel) return;
-        let commitsWrapper = commitsElement.closest('.commits-wrapper');
+        const commitsWrapper = commitsElement.closest('.commits-wrapper');
         this.addObserverOnFirstCommitVisibilityOfRepo(commitsElement, commitsWrapper);
         this.addObserverOnLastCommitVisibilityOfRepo(commitsElement, commitsWrapper);
-      }
+      });
     },
 
-    addObserverOnFirstCommitVisibilityOfRepo: function(commitsElement, commitsWrapper) {
-      let previousCommitsIconElement = commitsWrapper.querySelector('.left-arrow-icon');
-      let firstCommitElement = commitsElement.querySelector('a:first-of-type');
-      let firstCommitObserver = new IntersectionObserver(
-        (entries, observer) => {
+    addObserverOnFirstCommitVisibilityOfRepo(commitsElement, commitsWrapper) {
+      const previousCommitsIconElement = commitsWrapper.querySelector('.left-arrow-icon');
+      const firstCommitElement = commitsElement.querySelector('a:first-of-type');
+      const firstCommitObserver = new IntersectionObserver(
+        entries => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               previousCommitsIconElement.hidden = true;
@@ -148,11 +154,11 @@ export default {
       firstCommitObserver.observe(firstCommitElement);
     },
 
-    addObserverOnLastCommitVisibilityOfRepo: function(commitsElement, commitsWrapper) {
-      let nextCommitsIconElement = commitsWrapper.querySelector('.right-arrow-icon');
-      let lastCommitElement = commitsElement.querySelector('a:last-of-type');
-      let lastCommitObserver = new IntersectionObserver(
-        (entries, observer) => {
+    addObserverOnLastCommitVisibilityOfRepo(commitsElement, commitsWrapper) {
+      const nextCommitsIconElement = commitsWrapper.querySelector('.right-arrow-icon');
+      const lastCommitElement = commitsElement.querySelector('a:last-of-type');
+      const lastCommitObserver = new IntersectionObserver(
+        entries => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               nextCommitsIconElement.hidden = true;
@@ -170,31 +176,31 @@ export default {
       lastCommitObserver.observe(lastCommitElement);
     },
 
-    markNotificationRead: async function(repoIdentifier, commitSha, index) {
-      this.$delete(this.notifications[repoIdentifier], index);
-      deleteSingleNotificationOfRepo(repoIdentifier, commitSha);
+    async markNotificationRead(repoIdentifier, commitSha, index) {
+      this.$delete(this.notifications[repoIdentifier], index); // update ui
+      deleteSingleNotificationOfRepo(repoIdentifier, commitSha); // update storage
 
-      this.pendingNotificationsCount = this.pendingNotificationsCount - 1;
+      this.pendingNotificationsCount -= 1;
       decrementNumberOfPendingNotifications();
     },
 
-    unsubscribeRepoExtended: function(repoIdentifier) {
-      let repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
-      this.pendingNotificationsCount = this.pendingNotificationsCount - repoPendingNotificationsCount;
+    unsubscribeRepoExtended(repoIdentifier) {
+      const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
+      this.pendingNotificationsCount -= repoPendingNotificationsCount;
       this.$delete(this.notifications, repoIdentifier);
 
       this.unsubscribeRepo(repoIdentifier);
       updateNumberOfPendingNotifications(this.pendingNotificationsCount);
     },
 
-    deleteSelectedReposNotifications: async function() {
-      for (let repoIdentifier of this.selectedRepos) {
+    async deleteSelectedReposNotifications() {
+      this.selectedRepos.forEach(async repoIdentifier => {
         await deleteAllNotificationsOfRepo(repoIdentifier);
-        let repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
-        this.pendingNotificationsCount = this.pendingNotificationsCount - repoPendingNotificationsCount;
+        const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
+        this.pendingNotificationsCount -= repoPendingNotificationsCount;
         await updateNumberOfPendingNotifications(this.pendingNotificationsCount);
         this.$delete(this.notifications, repoIdentifier);
-      }
+      });
 
       this.selectedRepos = [];
     },

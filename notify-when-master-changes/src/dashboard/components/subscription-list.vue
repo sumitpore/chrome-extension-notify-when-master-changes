@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { getAllReposFromStorage, deleteMultipleRepoInfoFromStorage } from '../../data-layer/repo-info-storage-api';
+import { deleteMultipleRepoInfoFromStorage } from '../../data-layer/repo-info-storage-api';
 import mixin from '../../shared/vue-mixins';
 
 export default {
@@ -28,27 +28,27 @@ export default {
 
   mixins: [mixin],
 
-  created: async function() {
-    let savedRepos = await getAllReposFromStorage();
-    if (savedRepos != null) {
-      this.savedRepos = savedRepos;
-    }
+  props: {
+    savedRepos: {
+      type: Object,
+    },
   },
 
   computed: {
-    emptyReposList: function() {
+    emptyReposList() {
       return Object.keys(this.savedRepos).length === 0;
     },
   },
 
   methods: {
-    unsubscribeSelectedRepos: function() {
+    unsubscribeSelectedRepos() {
       deleteMultipleRepoInfoFromStorage(this.selectedRepos);
+      const { selectedRepos } = this;
 
-      for (let repoIdentifier of this.selectedRepos) {
-        if (typeof this.savedRepos[repoIdentifier] == 'undefined') continue;
+      selectedRepos.forEach(repoIdentifier => {
+        if (typeof this.savedRepos[repoIdentifier] === 'undefined') return;
         this.$delete(this.savedRepos, repoIdentifier);
-      }
+      });
 
       this.selectedRepos = [];
     },

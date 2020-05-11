@@ -1,3 +1,5 @@
+/* eslint-disable prefer-rest-params */
+/* eslint-disable no-restricted-globals */
 const HISTORY_CHANGE_MESSAGE = 'stm:page-changed';
 
 const postMessageOnHistoryChange = function() {
@@ -8,7 +10,7 @@ const postMessageOnHistoryChange = function() {
   //   return pushState.apply( this, arguments );
   // };
 
-  let replaceState = history.replaceState;
+  const { replaceState } = history;
   history.replaceState = function() {
     window.postMessage(HISTORY_CHANGE_MESSAGE, '*');
     return replaceState.apply(this, arguments);

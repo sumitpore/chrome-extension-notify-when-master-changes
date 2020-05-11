@@ -4,7 +4,6 @@ import { deleteRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
 export default {
   data: function() {
     return {
-      savedRepos: {},
       selectedRepos: [],
     };
   },

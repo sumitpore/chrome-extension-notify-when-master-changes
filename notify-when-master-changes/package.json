@@ -26,7 +26,8 @@
     "is-promise": "2.1.0",
     "vue": "^2.6.10",
     "vue-async-computed": "^3.8.2",
-    "vue-nav-tabs": "^0.5.7"
+    "vue-nav-tabs": "^0.5.7",
+    "auto-bind": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -36,7 +37,6 @@
     "@babel/runtime-corejs3": "^7.4.0",
     "@types/chrome": "^0.0.74",
     "archiver": "^3.0.0",
-    "auto-bind": "^4.0.0",
     "babel-eslint": "^10.0.3",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "babel-loader": "^8.0.2",
