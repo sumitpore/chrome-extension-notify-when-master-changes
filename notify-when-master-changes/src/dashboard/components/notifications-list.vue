@@ -181,6 +181,11 @@ export default {
       deleteSingleNotificationOfRepo(repoIdentifier, commitSha); // update storage
 
       this.pendingNotificationsCount -= 1;
+
+      // if there are no more notifications related to current repo, delete the repo.
+      if (this.notifications[repoIdentifier].length == 0) {
+        this.$delete(this.notifications, repoIdentifier);
+      }
       decrementNumberOfPendingNotifications();
     },
 
