@@ -60,7 +60,7 @@ const getAllReposFromStorage = async function() {
   return savedRepos;
 };
 
-const getAllSavedReposIdentifiers = async function() {
+const getAllReposIdentifiersFromStorage = async function() {
   const savedRepos = await getAllReposFromStorage();
   if (savedRepos == null) return [];
   return Object.keys(savedRepos);
@@ -73,5 +73,5 @@ export {
   isRepoStoredInStorage,
   getAllReposFromStorage,
   getRepoInfoFromStorage,
-  getAllSavedReposIdentifiers,
+  getAllReposIdentifiersFromStorage,
 };

@@ -57,7 +57,7 @@ const getTotalNumberOfPendingNotifications = async function() {
   return numberOfPendingNotifications;
 };
 
-const updateNumberOfPendingNotifications = async function(notificationsCount) {
+const updatePendingNotificationsCount = async function(notificationsCount) {
   saveObjectInLocalStorage({ pending_notifications_count: parseInt(notificationsCount, 10) });
 };
 
@@ -80,7 +80,7 @@ export {
   deleteSingleNotificationOfRepo,
   getAllReposNotifications,
   getTotalNumberOfPendingNotifications,
-  updateNumberOfPendingNotifications,
+  updatePendingNotificationsCount,
   increamentNumberOfPendingNotifications,
   decrementNumberOfPendingNotifications,
 };

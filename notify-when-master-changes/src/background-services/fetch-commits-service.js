@@ -1,4 +1,4 @@
-import { getAllSavedReposIdentifiers } from '../data-layer/repo-info-storage-api';
+import { getAllReposIdentifiersFromStorage } from '../data-layer/repo-info-storage-api';
 import { getLastFetchedCommitSha, saveLastFetchedCommitSha } from '../data-layer/last-fetched-commit-sha-storage-api';
 import { saveNotification, increamentNumberOfPendingNotifications } from '../data-layer/notifications-storage-api';
 
@@ -6,7 +6,7 @@ class FetchCommitsService {
   // fetch data and save to local storage
   static async fetchCommits() {
     console.log('start HTTP Request...');
-    const repoIdentifiers = await getAllSavedReposIdentifiers();
+    const repoIdentifiers = await getAllReposIdentifiersFromStorage();
     console.log(repoIdentifiers);
 
     if (repoIdentifiers.length == 0) {
