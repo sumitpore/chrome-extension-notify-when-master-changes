@@ -16,7 +16,7 @@
             v-if="commits.length > minCommitsCountForCarousel"
             class="left-arrow-icon"
             :id="`${repoIdentifier}-previous-commits-icon`"
-            @click="showPreviousCommits(repoIdentifier)"
+            @click="ui.showPreviousCommits(repoIdentifier)"
           ></button>
           <div class="commits" :id="`${repoIdentifier}-commits`">
             <a
@@ -25,7 +25,7 @@
               :key="commit.sha"
               :title="commit.message"
               :href="`https://github.com/${repoIdentifier}/commit/${commit.sha}`"
-              @click="markNotificationRead(repoIdentifier, commit.sha, index)"
+              @click="uiStorage.deleteCommit(repoIdentifier, commit.sha, index)"
               >{{ commit.sha.substring(0, 7) }}</a
             >
           </div>
@@ -33,16 +33,16 @@
             v-if="commits.length > minCommitsCountForCarousel"
             class="right-arrow-icon"
             :id="`${repoIdentifier}-next-commits-icon`"
-            @click="showNextCommits(repoIdentifier)"
+            @click="ui.showNextCommits(repoIdentifier)"
           ></button>
         </div>
 
         <div class="action-items">
-          <button class="mute-icon" title="Unsubscribe" @click="unsubscribeRepoExtended(repoIdentifier)"></button>
+          <button class="mute-icon" title="Unsubscribe" @click="uiStorage.unsubscribeRepoExtended(repoIdentifier)"></button>
         </div>
       </div>
 
-      <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="deleteSelectedReposNotifications">Delete Notifications</button>
+      <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="uiStorage.deleteSelectedReposNotifications">Delete Notifications</button>
     </section>
 
     <section v-else>
@@ -53,14 +53,7 @@
 
 <script>
 import mixin from '../../shared/vue-mixins';
-import {
-  getAllReposNotifications,
-  getTotalNumberOfPendingNotifications,
-  decrementNumberOfPendingNotifications,
-  updateNumberOfPendingNotifications,
-  deleteAllNotificationsOfRepo,
-  deleteSingleNotificationOfRepo,
-} from '../../data-layer/notifications-storage-api';
+import * as notificationsStorage from '../../data-layer/notifications-storage-api';
 
 export default {
   name: 'NotificationsList',
@@ -77,10 +70,18 @@ export default {
     return {
       minCommitsCountForCarousel: 3,
       singleCommitElementWidth: 0,
+      notifications: {},
+      pendingNotificationsCount: 0,
+      ui: this.uiMethods(),
+      storage: this.storageMethods(),
+      uiStorage: this.uiStorageMethods(),
     };
   },
 
   async mounted() {
+    this.notifications = await this.storage.getAllReposNotifications();
+    this.pendingNotificationsCount = await this.storage.getTotalNumberOfPendingNotifications();
+
     if (this.pendingNotificationsCount <= 0) {
       return;
     }
@@ -92,122 +93,142 @@ export default {
       this.singleCommitElementWidth = singleCommitElement.clientWidth;
     }
 
-    this.controlVisibilityPreviousAndNextIcons();
-  },
-
-  asyncComputed: {
-    notifications: {
-      async get() {
-        return getAllReposNotifications();
-      },
-      default: {},
-    },
-    pendingNotificationsCount: {
-      async get() {
-        return getTotalNumberOfPendingNotifications();
-      },
-      default: 0,
-    },
+    this.ui.controlVisibilityPreviousAndNextIcons();
   },
 
   methods: {
-    showPreviousCommits(repoIdentifier) {
-      const commitsElement = document.getElementById(`${repoIdentifier}-commits`);
-      commitsElement.scrollLeft = commitsElement.scrollLeft - commitsElement.offsetWidth + this.singleCommitElementWidth;
-    },
+    // Methods that affect UI. Access inside methods with `this.ui`
+    uiMethods() {
+      return {
+        showPreviousCommits(repoIdentifier) {
+          const commitsElement = document.getElementById(`${repoIdentifier}-commits`);
+          commitsElement.scrollLeft = commitsElement.scrollLeft - commitsElement.offsetWidth + this.singleCommitElementWidth;
+        },
 
-    showNextCommits(repoIdentifier) {
-      const commitsElement = document.getElementById(`${repoIdentifier}-commits`);
-      commitsElement.scrollLeft = commitsElement.scrollLeft + commitsElement.offsetWidth - this.singleCommitElementWidth;
-    },
+        showNextCommits: repoIdentifier => {
+          const commitsElement = document.getElementById(`${repoIdentifier}-commits`);
+          commitsElement.scrollLeft = commitsElement.scrollLeft + commitsElement.offsetWidth - this.singleCommitElementWidth;
+        },
 
-    controlVisibilityPreviousAndNextIcons() {
-      const allCommitsElements = document.querySelectorAll('.commits');
-      if (allCommitsElements == null) return;
-      allCommitsElements.forEach(commitsElement => {
-        if (commitsElement.childElementCount <= this.minCommitsCountForCarousel) return;
-        const commitsWrapper = commitsElement.closest('.commits-wrapper');
-        this.addObserverOnFirstCommitVisibilityOfRepo(commitsElement, commitsWrapper);
-        this.addObserverOnLastCommitVisibilityOfRepo(commitsElement, commitsWrapper);
-      });
-    },
-
-    addObserverOnFirstCommitVisibilityOfRepo(commitsElement, commitsWrapper) {
-      const previousCommitsIconElement = commitsWrapper.querySelector('.left-arrow-icon');
-      const firstCommitElement = commitsElement.querySelector('a:first-of-type');
-      const firstCommitObserver = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              previousCommitsIconElement.hidden = true;
-            } else {
-              previousCommitsIconElement.hidden = false;
-            }
+        controlVisibilityPreviousAndNextIcons: () => {
+          const allCommitsElements = document.querySelectorAll('.commits');
+          if (allCommitsElements == null) return;
+          allCommitsElements.forEach(commitsElement => {
+            if (commitsElement.childElementCount <= this.minCommitsCountForCarousel) return;
+            const commitsWrapper = commitsElement.closest('.commits-wrapper');
+            this.ui.addObserverOnFirstCommitVisibilityOfRepo(commitsElement, commitsWrapper);
+            this.ui.addObserverOnLastCommitVisibilityOfRepo(commitsElement, commitsWrapper);
           });
         },
-        {
-          root: commitsElement,
-          rootMargin: '0px 0px 0px 10px',
-          threshold: 1.0,
-        }
-      );
-      firstCommitObserver.observe(firstCommitElement);
-    },
 
-    addObserverOnLastCommitVisibilityOfRepo(commitsElement, commitsWrapper) {
-      const nextCommitsIconElement = commitsWrapper.querySelector('.right-arrow-icon');
-      const lastCommitElement = commitsElement.querySelector('a:last-of-type');
-      const lastCommitObserver = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              nextCommitsIconElement.hidden = true;
-            } else {
-              nextCommitsIconElement.hidden = false;
+        addObserverOnFirstCommitVisibilityOfRepo: (commitsElement, commitsWrapper) => {
+          const previousCommitsIconElement = commitsWrapper.querySelector('.left-arrow-icon');
+          const firstCommitElement = commitsElement.querySelector('a:first-of-type');
+          const firstCommitObserver = new IntersectionObserver(
+            entries => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  previousCommitsIconElement.hidden = true;
+                } else {
+                  previousCommitsIconElement.hidden = false;
+                }
+              });
+            },
+            {
+              root: commitsElement,
+              rootMargin: '0px 0px 0px 10px',
+              threshold: 1.0,
             }
-          });
+          );
+          firstCommitObserver.observe(firstCommitElement);
         },
-        {
-          root: commitsElement,
-          rootMargin: '0px 10px 0px 0px',
-          threshold: 1.0,
-        }
-      );
-      lastCommitObserver.observe(lastCommitElement);
+
+        addObserverOnLastCommitVisibilityOfRepo: (commitsElement, commitsWrapper) => {
+          const nextCommitsIconElement = commitsWrapper.querySelector('.right-arrow-icon');
+          const lastCommitElement = commitsElement.querySelector('a:last-of-type');
+          const lastCommitObserver = new IntersectionObserver(
+            entries => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  nextCommitsIconElement.hidden = true;
+                } else {
+                  nextCommitsIconElement.hidden = false;
+                }
+              });
+            },
+            {
+              root: commitsElement,
+              rootMargin: '0px 10px 0px 0px',
+              threshold: 1.0,
+            }
+          );
+          lastCommitObserver.observe(lastCommitElement);
+        },
+
+        deleteCommit: (repoIdentifier, index) => {
+          this.$delete(this.notifications[repoIdentifier], index);
+          // if there are no more notifications related to current repo, delete the repo.
+          if (this.notifications[repoIdentifier].length == 0) {
+            this.ui.deleteRepoRow(repoIdentifier);
+          }
+        },
+
+        deleteRepoRow: repoIdentifier => {
+          this.$delete(this.notifications, repoIdentifier);
+        },
+      };
     },
 
-    async markNotificationRead(repoIdentifier, commitSha, index) {
-      this.$delete(this.notifications[repoIdentifier], index); // update ui
-      deleteSingleNotificationOfRepo(repoIdentifier, commitSha); // update storage
-
-      this.pendingNotificationsCount -= 1;
-
-      // if there are no more notifications related to current repo, delete the repo.
-      if (this.notifications[repoIdentifier].length == 0) {
-        this.$delete(this.notifications, repoIdentifier);
-      }
-      decrementNumberOfPendingNotifications();
+    // Methods that affect Storage. Access inside methods with `this.storage`
+    storageMethods() {
+      return {
+        getAllReposNotifications: notificationsStorage.getAllReposNotifications,
+        getTotalNumberOfPendingNotifications: notificationsStorage.getTotalNumberOfPendingNotifications,
+        updatePendingNotificationsCount: notificationsStorage.updatePendingNotificationsCount,
+        deleteSingleNotificationOfRepo: notificationsStorage.deleteSingleNotificationOfRepo,
+        decrementNumberOfPendingNotifications: notificationsStorage.decrementNumberOfPendingNotifications,
+        deleteAllNotificationsOfRepo: notificationsStorage.deleteAllNotificationsOfRepo,
+      };
     },
 
-    unsubscribeRepoExtended(repoIdentifier) {
-      const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
-      this.pendingNotificationsCount -= repoPendingNotificationsCount;
-      this.$delete(this.notifications, repoIdentifier);
+    // Methods that affect both UI and Storage. Access inside methods with `this.uiStorage`
+    uiStorageMethods() {
+      return {
+        unsubscribeRepoExtended: repoIdentifier => {
+          const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
+          this.uiStorage.decrementPendingNotificationsCountBy(repoPendingNotificationsCount);
 
-      this.unsubscribeRepo(repoIdentifier);
-      updateNumberOfPendingNotifications(this.pendingNotificationsCount);
-    },
+          this.ui.deleteRepoRow(repoIdentifier);
 
-    async deleteSelectedReposNotifications() {
-      this.selectedRepos.forEach(async repoIdentifier => {
-        await deleteAllNotificationsOfRepo(repoIdentifier);
-        const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
-        this.pendingNotificationsCount -= repoPendingNotificationsCount;
-        await updateNumberOfPendingNotifications(this.pendingNotificationsCount);
-        this.$delete(this.notifications, repoIdentifier);
-      });
+          // Coming from mixin
+          this.unsubscribeRepo(repoIdentifier);
+        },
 
-      this.selectedRepos = [];
+        deleteSelectedReposNotifications: async () => {
+          this.selectedRepos.forEach(async repoIdentifier => {
+            await this.storage.deleteAllNotificationsOfRepo(repoIdentifier);
+
+            const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
+            this.uiStorage.decrementPendingNotificationsCountBy(repoPendingNotificationsCount);
+
+            this.ui.deleteRepoRow(repoIdentifier);
+          });
+
+          this.selectedRepos = [];
+        },
+
+        deleteCommit: async (repoIdentifier, commitSha, index) => {
+          this.ui.deleteCommit(repoIdentifier, index);
+          this.uiStorage.decrementPendingNotificationsCountBy(1);
+          this.storage.deleteSingleNotificationOfRepo(repoIdentifier, commitSha);
+          this.storage.decrementNumberOfPendingNotifications();
+        },
+
+        decrementPendingNotificationsCountBy: count => {
+          this.pendingNotificationsCount -= count;
+          this.storage.updatePendingNotificationsCount(this.pendingNotificationsCount);
+        },
+      };
     },
   },
 };
