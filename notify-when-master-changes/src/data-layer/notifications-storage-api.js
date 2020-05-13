@@ -42,7 +42,7 @@ const getAllReposNotifications = async function() {
   if (allRepos == null) return notifications;
 
   Object.keys(allRepos).forEach(repoIdentifier => {
-    if (typeof allRepos[repoIdentifier].notifications === 'undefined' || allRepos[repoIdentifier].notifications == null) {
+    if (typeof allRepos[repoIdentifier].notifications === 'undefined' || allRepos[repoIdentifier].notifications == null || allRepos[repoIdentifier].notifications.length == 0) {
       return;
     }
     const notification = { [repoIdentifier]: allRepos[repoIdentifier].notifications };

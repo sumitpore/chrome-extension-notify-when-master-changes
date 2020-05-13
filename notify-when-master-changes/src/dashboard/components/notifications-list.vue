@@ -205,14 +205,17 @@ export default {
         },
 
         deleteSelectedReposNotifications: async () => {
-          this.selectedRepos.forEach(async repoIdentifier => {
+          // await does not work inside forEach loop, so using for..Of
+          // eslint-disable-next-line no-restricted-syntax
+          for (const repoIdentifier of this.selectedRepos) {
+            // eslint-disable-next-line no-await-in-loop
             await this.storage.deleteAllNotificationsOfRepo(repoIdentifier);
 
             const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
             this.uiStorage.decrementPendingNotificationsCountBy(repoPendingNotificationsCount);
 
             this.ui.deleteRepoRow(repoIdentifier);
-          });
+          }
 
           this.selectedRepos = [];
         },

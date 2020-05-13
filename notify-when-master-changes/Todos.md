@@ -3,7 +3,7 @@
 [ ] Fix Notification List Bug
 [ ] Fix Two buttons appearing Bug
 [ ] Pass Subscription List from App Component to Child Components
-[ ] When Notification of a Repo are read, it does not delete the row.
+[x] When Notification of a Repo are read, it does not delete the row.
 
 https://api.github.com/repos/javascript-tutorial/en.javascript.info/compare/<OLD_SHA>...<NEW_SHA>
 
