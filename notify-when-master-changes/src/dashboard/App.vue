@@ -31,7 +31,6 @@ export default {
     tabName: {
       async get() {
         const pendingNotificationsCount = await getTotalNumberOfPendingNotifications();
-        console.log(pendingNotificationsCount);
         return pendingNotificationsCount > 0 ? 'Notifications' : 'Subscription List';
       },
       default: 'Subscription List',
