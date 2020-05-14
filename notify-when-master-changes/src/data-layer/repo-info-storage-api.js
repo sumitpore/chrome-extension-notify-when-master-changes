@@ -4,19 +4,24 @@ const saveRepoInfoInStorage = async function(repoIdentifier, repoInfo) {
   const savedRepos = await getObjectFromLocalStorage('repos');
   let repos = null;
   let repoInfoToSave = null;
+
   if (typeof savedRepos == 'undefined') {
     const newRepo = { [repoIdentifier]: repoInfo };
     repos = { ...newRepo };
-  } else {
-    if (typeof savedRepos[repoIdentifier] == 'undefined') {
-      repoInfoToSave = { [repoIdentifier]: repoInfo };
-    } else {
-      const updateInfo = { ...savedRepos[repoIdentifier], ...repoInfo };
-      repoInfoToSave = { [repoIdentifier]: updateInfo };
-    }
-    repos = { ...savedRepos, ...repoInfoToSave };
+    await saveObjectInLocalStorage({ repos });
+    return true;
   }
+
+  if (typeof savedRepos[repoIdentifier] == 'undefined') {
+    repoInfoToSave = { [repoIdentifier]: repoInfo };
+  } else {
+    const updateInfo = { ...savedRepos[repoIdentifier], ...repoInfo };
+    repoInfoToSave = { [repoIdentifier]: updateInfo };
+  }
+  repos = { ...savedRepos, ...repoInfoToSave };
+
   await saveObjectInLocalStorage({ repos });
+  return true;
 };
 
 const deleteMultipleRepoInfoFromStorage = async function(repoIdentifiers = []) {
