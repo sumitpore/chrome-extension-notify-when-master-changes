@@ -1,6 +1,8 @@
 import autoBind from 'auto-bind';
 import { getRepoIdentifierFromUrl } from '../utils';
 import { isRepoStoredInStorage, saveRepoInfoInStorage, deleteRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
+import FetchCommitsService from '../background-services/fetch-commits-service';
+import { saveLastFetchedCommitSha } from '../data-layer/last-fetched-commit-sha-storage-api';
 
 class SubscribeToMasterBtn {
   props = {
@@ -85,11 +87,15 @@ class SubscribeToMasterBtn {
     if (await isRepoStoredInStorage(this.props.repoIdentifier)) {
       return;
     }
+    await saveRepoInfoInStorage(this.props.repoIdentifier, {});
 
-    const repoInfo = {
-      id: this.props.repoIdentifier,
-    };
-    await saveRepoInfoInStorage(this.props.repoIdentifier, repoInfo);
+    // Save reference of Master commit sha when user adds a repo in Subscription
+    // list, so that extension notifies about commits coming after this.
+    const latestCommitOnMaster = await FetchCommitsService.FetchLatestCommitOnMaster(this.props.repoIdentifier);
+    if (latestCommitOnMaster != null) {
+      saveLastFetchedCommitSha(this.props.repoIdentifier, latestCommitOnMaster.sha);
+    }
+
     this.setupBtn(true);
   }
 
