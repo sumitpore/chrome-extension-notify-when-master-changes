@@ -23,8 +23,8 @@ const deleteAllNotificationsOfRepo = async function(repoIdentifier) {
 const deleteSingleNotificationOfRepo = async function(repoIdentifier, commitSha) {
   const notifications = await getRepoNotifications(repoIdentifier);
   if (notifications.length == 0) return;
-
   Object.keys(notifications).forEach(index => {
+    if (typeof notifications[index] == 'undefined') return;
     if (notifications[index].sha == commitSha) {
       notifications.splice(index, 1);
     }
