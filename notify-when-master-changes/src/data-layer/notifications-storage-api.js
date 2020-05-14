@@ -56,18 +56,19 @@ const getTotalNumberOfPendingNotifications = async function() {
 
 const updatePendingNotificationsCount = async function(notificationsCount) {
   saveObjectInLocalStorage({ pending_notifications_count: parseInt(notificationsCount, 10) });
+
+  const ba = chrome.browserAction;
+  if (notificationsCount > 0) {
+    ba.setBadgeBackgroundColor({ color: [255, 0, 0, 128] });
+    ba.setBadgeText({ text: `${notificationsCount}` });
+  } else {
+    ba.setBadgeText({ text: '' });
+  }
 };
 
 const increamentNumberOfPendingNotifications = async function() {
   const numberOfPendingNotifications = parseInt(await getTotalNumberOfPendingNotifications(), 10);
-  saveObjectInLocalStorage({ pending_notifications_count: numberOfPendingNotifications + 1 });
-};
-
-const decrementNumberOfPendingNotifications = async function() {
-  const numberOfPendingNotifications = parseInt(await getTotalNumberOfPendingNotifications(), 10);
-  if (numberOfPendingNotifications > 0) {
-    saveObjectInLocalStorage({ pending_notifications_count: numberOfPendingNotifications - 1 });
-  }
+  updatePendingNotificationsCount(numberOfPendingNotifications + 1);
 };
 
 export {
@@ -79,5 +80,4 @@ export {
   getTotalNumberOfPendingNotifications,
   updatePendingNotificationsCount,
   increamentNumberOfPendingNotifications,
-  decrementNumberOfPendingNotifications,
 };

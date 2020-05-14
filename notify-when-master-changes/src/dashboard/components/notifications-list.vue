@@ -186,7 +186,6 @@ export default {
         getTotalNumberOfPendingNotifications: notificationsStorage.getTotalNumberOfPendingNotifications,
         updatePendingNotificationsCount: notificationsStorage.updatePendingNotificationsCount,
         deleteSingleNotificationOfRepo: notificationsStorage.deleteSingleNotificationOfRepo,
-        decrementNumberOfPendingNotifications: notificationsStorage.decrementNumberOfPendingNotifications,
         deleteAllNotificationsOfRepo: notificationsStorage.deleteAllNotificationsOfRepo,
       };
     },
@@ -224,7 +223,6 @@ export default {
           this.ui.deleteCommit(repoIdentifier, index);
           this.uiStorage.decrementPendingNotificationsCountBy(1);
           this.storage.deleteSingleNotificationOfRepo(repoIdentifier, commitSha);
-          this.storage.decrementNumberOfPendingNotifications();
         },
 
         decrementPendingNotificationsCountBy: count => {
