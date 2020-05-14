@@ -11,11 +11,8 @@ const getRepoNotifications = async function(repoIdentifier) {
 // example notification object { sha: '175aefa0b85ed9a740636f816495479e5787ed9d',
 // message: 'Commit Message' }
 const saveNotification = async function(repoIdentifier, notification) {
-  console.log(notification);
   const notifications = await getRepoNotifications(repoIdentifier);
-  console.log(notifications);
   notifications.push(notification);
-  console.log({ notifications });
   await saveRepoInfoInStorage(repoIdentifier, { notifications });
 };
 
