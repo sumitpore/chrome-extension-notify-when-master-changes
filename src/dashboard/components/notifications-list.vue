@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import mixin from '../../shared/vue-mixins';
+import mixin from '../../shared/vue-mixin';
 import * as notificationsStorage from '../../data-layer/notifications-storage-api';
 
 export default {
