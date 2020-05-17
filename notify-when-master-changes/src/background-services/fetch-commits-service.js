@@ -4,13 +4,13 @@
 import { getAllReposIdentifiersFromStorage } from '../data-layer/repo-info-storage-api';
 import { getLastFetchedCommitSha, saveLastFetchedCommitSha } from '../data-layer/last-fetched-commit-sha-storage-api';
 import { saveNotification, increamentNumberOfPendingNotifications } from '../data-layer/notifications-storage-api';
+import BrowserNotificationsService from './browser-notifications-service';
 
 class FetchCommitsService {
   // fetch data and save to local storage
   static async fetchCommits() {
-    console.log('start HTTP Request...');
     const repoIdentifiers = await getAllReposIdentifiersFromStorage();
-    console.log(repoIdentifiers);
+    const browserNotificationRepos = [];
 
     if (repoIdentifiers.length == 0) {
       return;
@@ -36,6 +36,7 @@ class FetchCommitsService {
       if (lastFetchedCommitSha == null) {
         await FetchCommitsService.saveCommitInStorage(repoIdentifier, latestCommitOnMaster);
         await saveLastFetchedCommitSha(repoIdentifier, latestCommitOnMaster.sha);
+        browserNotificationRepos.push(repoIdentifier);
         continue;
       }
 
@@ -47,6 +48,7 @@ class FetchCommitsService {
       if (commitsBetweenLastFetchedAndLatestMaster == null) {
         await FetchCommitsService.saveCommitInStorage(repoIdentifier, latestCommitOnMaster);
         await saveLastFetchedCommitSha(repoIdentifier, latestCommitOnMaster.sha);
+        browserNotificationRepos.push(repoIdentifier);
         continue;
       }
 
@@ -55,6 +57,12 @@ class FetchCommitsService {
         await FetchCommitsService.saveCommitInStorage(repoIdentifier, commit);
       }
       await saveLastFetchedCommitSha(repoIdentifier, latestCommitOnMaster.sha);
+      browserNotificationRepos.push(repoIdentifier);
+    }
+
+    if (browserNotificationRepos.length) {
+      console.log('Dispatching Browser Notification!');
+      BrowserNotificationsService.dispatchNewCommitsNotification(browserNotificationRepos);
     }
   }
 
