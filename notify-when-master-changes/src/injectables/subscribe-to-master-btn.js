@@ -16,6 +16,9 @@ class SubscribeToMasterBtn {
   }
 
   async setupBtn(forceRender = false) {
+    const isPrivateRepo = document.querySelector('h1.private') != null;
+    if (isPrivateRepo) return;
+
     this.addPageActionsElementInProps();
     this.addRepoIdentifierInProps();
 
