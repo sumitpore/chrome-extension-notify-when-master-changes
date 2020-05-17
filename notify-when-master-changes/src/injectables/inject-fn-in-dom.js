@@ -3,7 +3,6 @@ const injectFnInDom = function(fn) {
   const parent = document.documentElement;
   script.textContent = `(${fn})();`;
   parent.appendChild(script);
-  // parent.removeChild(script);
 };
 
 export default injectFnInDom;
