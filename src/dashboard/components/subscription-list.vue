@@ -11,16 +11,10 @@
           <button class="mute-icon" title="Unsubscribe" @click="unsubscribeRepo(repoIdentifier)"></button>
         </div>
       </div>
-      <button
-        class="primary-btn"
-        :disabled="selectedRepos.length == 0"
-        @click="unsubscribeSelectedRepos"
-      >Unsubscribe</button>
+      <button class="primary-btn" :disabled="selectedRepos.length == 0" @click="unsubscribeSelectedRepos">Unsubscribe</button>
     </section>
     <section v-else>
-      <div
-        class="repo-item no-items"
-      >Visit Github Repository of your choice and click 'Subscribe to Master' button.</div>
+      <div class="repo-item no-items">Visit Github Repository of your choice and click 'Subscribe to Master' button.</div>
     </section>
   </div>
 </template>
