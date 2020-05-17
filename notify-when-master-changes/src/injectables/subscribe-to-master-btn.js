@@ -16,7 +16,7 @@ class SubscribeToMasterBtn {
   }
 
   async setupBtn(forceRender = false) {
-    this.addPageActionElementInProps();
+    this.addPageActionsElementInProps();
     this.addRepoIdentifierInProps();
 
     if (!this.props.repoIdentifier) {
@@ -27,7 +27,7 @@ class SubscribeToMasterBtn {
     this.addClickListenerOnBtn();
   }
 
-  addPageActionElementInProps() {
+  addPageActionsElementInProps() {
     this.props = { ...this.props, pageActions: document.querySelector('.pagehead-actions') };
   }
 
