@@ -18,6 +18,8 @@ repositories.
 Extension will check every 2 hours for the updates of repositories you have
 subscribed to.
 
+This extension works only with Public Repositories.
+
 ### Known Bugs
 
 1. Sometimes 'Subscribe To Master' button is shown twice.
