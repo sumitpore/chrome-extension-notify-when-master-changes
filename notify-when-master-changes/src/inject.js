@@ -14,7 +14,7 @@ import { postMessageOnHistoryChange } from './injectables/post-message-on-histor
  * uses ajax to load subsequent requests, 'Subscribe/d to Master' button would
  * become unavailable after first page in natural case.
  *
- * To avoid this, we are injecting a function in the dom which will post
+ * To avoid this, we are injecting a function `postMessageOnHistoryChange` in the dom which will post
  * a message when state of the history is replaced. `listenToMessagePostedOnHistoryChange`
  * can listen to that message & when a new message is detected, 'Subscribe/d to Master'
  * button is again added into the dom.
