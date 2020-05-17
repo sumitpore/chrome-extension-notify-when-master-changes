@@ -1,4 +1,4 @@
-# Subscribe to Master Chrome Extension
+# Subscribe to Master Chrome Extension <sup>β</sup>
 
 The purpose of this chrome extension is to notify when master branch of a
 desired repository gets a new update.
