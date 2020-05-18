@@ -15,6 +15,14 @@ This chrome extension will come handy when
 2. You want to get to notification when the repository you admire gets new
    change. (Think of it like a regular exercise for reading a good code)
 
+## How to install?
+This extension is not yet published on Chrome Web Store. Therefore follow this
+procedure to install
+1. Download the zip [here](https://github.com/sumitpore/chrome-extension-notify-when-master-changes/releases/download/v1.0.0/notify-when-master-changes-v1.0.0.zip).
+2. Extract the downloaded zip file.
+3. In your browser, go to *chrome://extensions/* and check the box for *Developer mode* in the top right.
+4. Click the *Load unpacked extension* button and select the extracted folder. Done!
+
 ## How this works?
 
 1. Go to Repository page you are interested in.
@@ -31,3 +39,8 @@ This extension works only with Public Repositories.
 ### Known Bugs
 
 1. Sometimes 'Subscribe To Master' button is shown twice.
+
+---
+
+PRs are welcome. If you find any issue or have any suggestion, add it in
+'Issues'.
