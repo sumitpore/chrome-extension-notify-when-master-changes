@@ -8,6 +8,12 @@ const getRepoNotifications = async function(repoIdentifier) {
   return typeof repoInfo.notifications === 'undefined' || repoInfo.notifications == null ? [] : repoInfo.notifications;
 };
 
+const getPendingNotificationsCountOfRepo = async function(repoIdentifier) {
+  const repoInfo = await getRepoInfoFromStorage(repoIdentifier);
+  if (repoInfo == null) return 0;
+  return typeof repoInfo.notifications === 'undefined' || repoInfo.notifications == null ? 0 : repoInfo.notifications.length;
+};
+
 // example notification object { sha: '175aefa0b85ed9a740636f816495479e5787ed9d',
 // message: 'Commit Message' }
 const saveNotification = async function(repoIdentifier, notification) {
@@ -73,6 +79,7 @@ const increamentNumberOfPendingNotifications = async function() {
 
 export {
   getRepoNotifications,
+  getPendingNotificationsCountOfRepo,
   saveNotification,
   deleteAllNotificationsOfRepo,
   deleteSingleNotificationOfRepo,

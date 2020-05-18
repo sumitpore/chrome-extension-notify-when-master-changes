@@ -20,18 +20,18 @@
 </template>
 
 <script>
-import { deleteMultipleRepoInfoFromStorage } from '../../data-layer/repo-info-storage-api';
-import mixin from '../../shared/vue-mixin';
+import { getRepoUrlFromIdentifier } from '../../utils';
+import { getAllReposFromStorage, deleteMultipleRepoInfoFromStorage, deleteRepoInfoFromStorage } from '../../data-layer/repo-info-storage-api';
+import { getTotalNumberOfPendingNotifications, getPendingNotificationsCountOfRepo, updatePendingNotificationsCount } from '../../data-layer/notifications-storage-api';
 
 export default {
   name: 'SubscriptionList',
 
-  mixins: [mixin],
-
-  props: {
-    savedRepos: {
-      type: Object,
-    },
+  data() {
+    return {
+      selectedRepos: [],
+      savedRepos: {},
+    };
   },
 
   computed: {
@@ -40,9 +40,28 @@ export default {
     },
   },
 
+  async mounted() {
+    this.$root.$on('rerender-subscription-list-screen', async () => {
+      this.savedRepos = await this.getSavedRepos();
+      this.selectedRepos = [];
+    });
+
+    this.savedRepos = await this.getSavedRepos();
+  },
+
   methods: {
-    unsubscribeSelectedRepos() {
-      deleteMultipleRepoInfoFromStorage(this.selectedRepos);
+    getRepoUrlFromIdentifier,
+
+    async getSavedRepos() {
+      const savedRepos = await getAllReposFromStorage();
+      if (savedRepos != null) {
+        return savedRepos;
+      }
+      return {};
+    },
+
+    async unsubscribeSelectedRepos() {
+      await deleteMultipleRepoInfoFromStorage(this.selectedRepos);
       const { selectedRepos } = this;
 
       selectedRepos.forEach(repoIdentifier => {
@@ -50,7 +69,33 @@ export default {
         this.$delete(this.savedRepos, repoIdentifier);
       });
 
+      // Update Pending Notification Count in storage.
+      const totalPendingNotificationsCount = await getTotalNumberOfPendingNotifications();
+      let selectedReposPendingNotificationCount = 0;
+      // eslint-disable-next-line no-restricted-syntax
+      for (const repoIdentifier of this.selectedRepos) {
+        // eslint-disable-next-line no-await-in-loop
+        selectedReposPendingNotificationCount += await getPendingNotificationsCountOfRepo(repoIdentifier);
+      }
+      await updatePendingNotificationsCount(totalPendingNotificationsCount - selectedReposPendingNotificationCount);
+
       this.selectedRepos = [];
+
+      this.$root.$emit('rerender-notifications-list-screen');
+    },
+
+    async unsubscribeRepo(repoIdentifier) {
+      if (typeof this.savedRepos[repoIdentifier] == 'undefined') return;
+      this.$delete(this.savedRepos, repoIdentifier); // update ui
+
+      // Update Pending Notification Count in storage.
+      const totalPendingNotificationsCount = await getTotalNumberOfPendingNotifications();
+      const repoPendingNotificationsCount = await getPendingNotificationsCountOfRepo(repoIdentifier);
+      await updatePendingNotificationsCount(totalPendingNotificationsCount - repoPendingNotificationsCount);
+
+      await deleteRepoInfoFromStorage(repoIdentifier);
+
+      this.$root.$emit('rerender-notifications-list-screen');
     },
   },
 };

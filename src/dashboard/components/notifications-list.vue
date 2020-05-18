@@ -38,7 +38,7 @@
         </div>
 
         <div class="action-items">
-          <button class="mute-icon" title="Unsubscribe" @click="uiStorage.unsubscribeRepoExtended(repoIdentifier)"></button>
+          <button class="mute-icon" title="Unsubscribe" @click="uiStorage.unsubscribeRepo(repoIdentifier)"></button>
         </div>
       </div>
 
@@ -52,24 +52,18 @@
 </template>
 
 <script>
-import mixin from '../../shared/vue-mixin';
+import { getRepoUrlFromIdentifier } from '../../utils';
 import * as notificationsStorage from '../../data-layer/notifications-storage-api';
+import { deleteRepoInfoFromStorage } from '../../data-layer/repo-info-storage-api';
 
 export default {
   name: 'NotificationsList',
-
-  mixins: [mixin],
-
-  props: {
-    savedRepos: {
-      type: Object,
-    },
-  },
 
   data() {
     return {
       minCommitsCountForCarousel: 3,
       singleCommitElementWidth: 0,
+      selectedRepos: [],
       notifications: {},
       pendingNotificationsCount: 0,
       ui: this.uiMethods(),
@@ -79,6 +73,12 @@ export default {
   },
 
   async mounted() {
+    this.$root.$on('rerender-notifications-list-screen', async () => {
+      this.notifications = await this.storage.getAllReposNotifications();
+      this.pendingNotificationsCount = await this.storage.getTotalNumberOfPendingNotifications();
+      this.selectedRepos = [];
+    });
+
     this.notifications = await this.storage.getAllReposNotifications();
     this.pendingNotificationsCount = await this.storage.getTotalNumberOfPendingNotifications();
 
@@ -97,6 +97,7 @@ export default {
   },
 
   methods: {
+    getRepoUrlFromIdentifier,
     // Methods that affect UI. Access inside methods with `this.ui`
     uiMethods() {
       return {
@@ -182,6 +183,7 @@ export default {
     // Methods that affect Storage. Access inside methods with `this.storage`
     storageMethods() {
       return {
+        deleteRepoInfoFromStorage,
         getAllReposNotifications: notificationsStorage.getAllReposNotifications,
         getTotalNumberOfPendingNotifications: notificationsStorage.getTotalNumberOfPendingNotifications,
         updatePendingNotificationsCount: notificationsStorage.updatePendingNotificationsCount,
@@ -193,14 +195,13 @@ export default {
     // Methods that affect both UI and Storage. Access inside methods with `this.uiStorage`
     uiStorageMethods() {
       return {
-        unsubscribeRepoExtended: repoIdentifier => {
+        unsubscribeRepo: async repoIdentifier => {
+          await this.storage.deleteRepoInfoFromStorage(repoIdentifier);
           const repoPendingNotificationsCount = this.notifications[repoIdentifier].length;
           this.uiStorage.decrementPendingNotificationsCountBy(repoPendingNotificationsCount);
-
           this.ui.deleteRepoRow(repoIdentifier);
 
-          // Coming from mixin
-          this.unsubscribeRepo(repoIdentifier);
+          this.$root.$emit('rerender-subscription-list-screen');
         },
 
         deleteSelectedReposNotifications: async () => {

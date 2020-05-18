@@ -3,6 +3,7 @@ import { getRepoIdentifierFromUrl } from '../utils';
 import { isRepoStoredInStorage, saveRepoInfoInStorage, deleteRepoInfoFromStorage } from '../data-layer/repo-info-storage-api';
 import FetchCommitsService from '../background-services/fetch-commits-service';
 import { saveLastFetchedCommitSha } from '../data-layer/last-fetched-commit-sha-storage-api';
+import { getPendingNotificationsCountOfRepo, getTotalNumberOfPendingNotifications, updatePendingNotificationsCount } from '../data-layer/notifications-storage-api';
 
 class SubscribeToMasterBtn {
   props = {
@@ -106,6 +107,11 @@ class SubscribeToMasterBtn {
     if (!(await isRepoStoredInStorage(this.props.repoIdentifier))) {
       return;
     }
+
+    // Update Notifications Count.
+    const totalPendingNotificationsCount = await getTotalNumberOfPendingNotifications();
+    const repoPendingNotificationsCount = await getPendingNotificationsCountOfRepo(this.props.repoIdentifier);
+    await updatePendingNotificationsCount(totalPendingNotificationsCount - repoPendingNotificationsCount);
 
     await deleteRepoInfoFromStorage(this.props.repoIdentifier);
     this.setupBtn(true);
