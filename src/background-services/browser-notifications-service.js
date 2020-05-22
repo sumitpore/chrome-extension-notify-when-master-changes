@@ -10,10 +10,10 @@ class BrowserNotificationsService {
 
     chrome.notifications.create(
       {
+        title,
+        message,
         type: 'basic',
         iconUrl: 'icons/icon_128.png',
-        title: title,
-        message: message,
         priority: 0,
       },
       cb
@@ -27,13 +27,19 @@ class BrowserNotificationsService {
 
     const message = reposList.join(',');
 
-    // Open dashboard when user clicks the notification. notification id is
-    // passed by chrome.notifications.create api
+    // notification id is passed by chrome.notifications.create api
     const onClickcallback = function(notificationId) {
+      // Open dashboard when user clicks the notification.
       chrome.notifications.onClicked.addListener(function() {
         chrome.tabs.create({ url: 'dashboard/dashboard.html' });
         chrome.notifications.clear(notificationId);
       });
+
+      // Hide Notification after 3 seconds.
+      setTimeout(() => {
+        chrome.notifications.clear(notificationId);
+      }, 3000);
+
       console.log('Browser Notification Callback Error: ', chrome.runtime.lastError);
     };
 
