@@ -22,7 +22,7 @@
       "all_frames": true
     }
   ],
-  "permissions": ["*://*.github.com/*", "storage", "webRequest", "webRequestBlocking", "tabs", "alarms", "notifications"],
+  "permissions": ["*://*.github.com/*", "storage", "webRequest", "webRequestBlocking", "tabs", "alarms", "notifications", "unlimitedStorage"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "web_accessible_resources": ["inject.js"],
   "options_ui": {
