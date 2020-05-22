@@ -16,7 +16,7 @@ This chrome comes handy when
    change. (Think of it like a regular exercise for reading a good code)
 
 ## How to install?
-This extension is not yet published on Chrome Web Store. Therefore follow this
+As of now I have no interest in publishing this to Chrome Web Store. So follow this
 procedure to install
 1. Download the zip [here](https://github.com/sumitpore/chrome-extension-notify-when-master-changes/releases/download/v1.0.0/notify-when-master-changes-v1.0.0.zip).
 2. Extract the downloaded zip file.
